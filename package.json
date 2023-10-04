@@ -11,6 +11,7 @@
 		"both": "concurrently \"nodemon index.js\" \"cd ../client && npm run dev\""
 	},
 	"dependencies": {
+		"firebase": "^10.4.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-router-dom": "^6.16.0",
