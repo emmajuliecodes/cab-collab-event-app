@@ -16,6 +16,7 @@ import UserProfile from "./views/Profile.tsx";
 import WithNav from "./components/Layouts/WithNav.tsx";
 import EventView from "./views/EventView.tsx";
 import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
+import Register from "./views/Register.tsx";
 
 const router = createBrowserRouter([
   {
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
             element: <Login />,
           },
           {
-            path: "/eventview",
+            path: "/eventById/:_id",
             element: <EventView />,
           },
 
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
           {
             path: "/profile",
             element: <UserProfile />,
+          },
+          {
+            path: "/register",
+            element: <Register />,
           },
         ],
       },

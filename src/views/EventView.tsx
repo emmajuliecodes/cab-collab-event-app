@@ -1,5 +1,9 @@
 const EventView = () => {
-	return <></>;
+	return (
+		<>
+			<h1>Full event info here</h1>
+		</>
+	);
 };
 
 export default EventView;

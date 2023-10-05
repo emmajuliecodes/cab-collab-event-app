@@ -8,9 +8,7 @@ const About = () => {
 				alignItems: "center",
 				// gap: "1em",
 			}}>
-			<h1>Reee...Cy...Cling?!</h1>
-			<br></br>
-			<img src="https://media.tenor.com/kMUFXGcgkvMAAAAd/the-simpsons-mr-burns.gif"></img>
+			<h1>I guess we explain events here?</h1>
 		</div>
 	);
 };
