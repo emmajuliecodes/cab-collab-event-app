@@ -32,7 +32,7 @@ const router = createBrowserRouter([
             <WithNav>
               <Outlet />
             </WithNav>
-            <WithFooter />
+            <WithFooter />x
           </>
         ),
         children: [
