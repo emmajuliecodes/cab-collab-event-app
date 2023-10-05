@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // // import { Link } from "react-router-dom";
 
-function AllEvents() {
+function EventsListView() {
 	const [eventsArray, setEventsArray] = useState<Event[]>([]);
 
 	useEffect(() => {
@@ -47,4 +47,4 @@ function AllEvents() {
 	);
 }
 
-export default AllEvents;
+export default EventsListView;
