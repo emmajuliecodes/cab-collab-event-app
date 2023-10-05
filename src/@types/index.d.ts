@@ -25,7 +25,6 @@ export interface Event {
 	map_location: Location;
 	street_address: Location;
 	image: string;
-	id: string;
 }
 
 export type Users = User[];

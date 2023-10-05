@@ -6,19 +6,27 @@ import { Link } from "react-router-dom";
 // // import { Link } from "react-router-dom";
 
 function EventsListView() {
-	const [eventsArray, setEventsArray] = useState<Event[]>([]);
+	const [eventsArray, setEventsArray] = useState<(Event & { id: string })[]>(
+		[]
+	);
 
 	useEffect(() => {
 		const fetchEvents = async () => {
 			const q = query(collection(db, "events"));
 			const querySnapshot = await getDocs(q);
 			console.log("querySnapshot", querySnapshot);
-			const eventsArray: Event[] = [];
+			const eventsArray: (Event & { id: string })[] = querySnapshot.docs.map(
+				(doc) => {
+					const eventData = doc.data() as Event;
+					return { ...eventData, id: doc.id };
+					// ({ ...(doc.data() as Event), id: doc.id });
+				}
+			);
 
-			querySnapshot.forEach((doc) => {
-				const data = doc.data() as Event;
-				eventsArray.push({ ...data });
-			});
+			// querySnapshot.forEach((doc) => {
+			// 	const data = doc.data() as Event;
+			// 	eventsArray.push({ ...data });
+			// });
 			setEventsArray(eventsArray);
 
 			console.log("eventsArray", eventsArray);

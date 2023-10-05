@@ -5,26 +5,25 @@ import { Event } from "../@types";
 import { useParams } from "react-router-dom";
 
 function EventDetailView(): React.ReactElement | null {
-	// const { id } = useParams()
-	// const [eventData, setEventData] = useState<Event>;
+	const { id } = useParams();
+	const [eventData, setEventData] = useState<Event | null>(null);
 
-	// useEffect(() => {
-	// 	const fetchEventById = async () => {
+	useEffect(() => {
+		const fetchEventById = async () => {
+			// const { _id } = useParams();
+			const docRef = doc(db, "events", "ixPT2HtIDQSSokWcSwfN");
 
-	// 		// const { _id } = useParams();
-	// 		const docRef = doc(db, "events", "ixPT2HtIDQSSokWcSwfN");
+			const docSnap = await getDoc(docRef);
 
-	// 		const docSnap = await getDoc(docRef);
-
-	// 		if (docSnap.exists()) {
-	// 			setEventData({ ...docSnap.data() });
-	// 			console.log("doc data", docSnap.data());
-	// 		} else {
-	// 			setEventData({});
-	// 		}
-	// 	}
-	// 	fetchEventById()
-	// }, [id]);
+			if (docSnap.exists()) {
+				setEventData({ ...docSnap.data() });
+				console.log("doc data", docSnap.data());
+			} else {
+				setEventData({});
+			}
+		};
+		fetchEventById();
+	}, [id]);
 
 	return (
 		<>
