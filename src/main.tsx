@@ -45,12 +45,13 @@ const router = createBrowserRouter([
 						path: "/events",
 						element: <Events />,
 					},
+
 					{
 						path: "/login",
 						element: <Login />,
 					},
 					{
-						path: "/eventById/:_id",
+						path: "/eventById/:id",
 						element: <EventDetailView />,
 					},
 
