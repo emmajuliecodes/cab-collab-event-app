@@ -1,34 +1,61 @@
 import { db } from "../firebaseConfig";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+	DocumentData,
+	Query,
+	collection,
+	getDocs,
+	query,
+	where,
+} from "firebase/firestore";
 import { Event } from "../@types";
 
 import { useEffect, useState } from "react";
 
 function FilterByCity() {
 	const [cityArray, setCityArray] = useState<(Event & { id: string })[]>([]);
+	const [inputValue, setInputValue] = useState("");
 
 	useEffect(() => {
-		const fetchByCity = async () => {
-			const q = query(collection(db, "events"), where("city", "=="));
-			const querySnapshot = await getDocs(q);
-			console.log("querySnapshot", querySnapshot);
-			const cityArray: (Event & { id: string })[] = querySnapshot.docs.map(
-				(doc) => {
-					const eventData = doc.data() as Event;
-					return { ...eventData, id: doc.id };
-				}
-			);
-
-			setCityArray(cityArray);
-			console.log(cityArray, "cityArray");
-		};
-
-		fetchByCity().catch((e) => console.log(e));
+		const q = query(collection(db, "events"));
+		fetchByCity(q).catch((e) => console.log(e));
 	}, []);
+
+	const fetchByCity = async (q: Query<DocumentData, DocumentData>) => {
+		console.log(inputValue, "inputvalue");
+		const querySnapshot = await getDocs(q);
+		console.log("querySnapshot", querySnapshot);
+		const foundArray: (Event & { id: string })[] = querySnapshot.docs.map(
+			(doc) => {
+				const eventData = doc.data() as Event;
+				return { ...eventData, id: doc.id };
+			}
+		);
+
+		setCityArray(foundArray);
+		console.log(foundArray, "foundArray");
+	};
+
+	const HandleClick = () => {
+		const q = query(collection(db, "events"), where("city", "==", inputValue));
+		fetchByCity(q).catch((e) => console.log(e));
+	};
 
 	return (
 		<>
 			<h1>Testing City Filters</h1>
+
+			<div className="search-bar">
+				<input
+					type="text"
+					id="citysearch"
+					name="citysearch"
+					placeholder="Search for a city..."
+					onChange={(i) => {
+						setInputValue(i.target.value);
+					}}
+				/>
+				<button onClick={HandleClick}>Click me</button>
+			</div>
 
 			{cityArray.map((e) => {
 				return (
