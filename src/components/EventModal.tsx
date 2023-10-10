@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { db } from "../firebaseConfig"; // replace with your path
+import { db } from "../firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const EventModal: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -14,39 +15,69 @@ const EventModal: React.FC = () => {
     eventName: "",
     host: "",
     image: "",
-    eventType: "public", // Default value
+    eventType: "public",
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    setFormError(null); // Clear errors upon change
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormError(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setImageFile(file);
+  };
+
+  const uploadImageAndGetURL = async () => {
+    if (!imageFile) return null;
+
+    const storage = getStorage();
+    const storageRef = ref(storage, "images/" + imageFile.name);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+    return new Promise<string | null>((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        () => {},
+        (error) => reject(error),
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    //  Validation
-    for (const [key, value] of Object.entries(formData)) {
-      if (!value.trim()) {
-        setFormError(`Please provide a ${key}`);
-        return;
-      }
+    setUploading(true);
+    if (!imageFile) {
+      setFormError(`Please provide an image`);
+      setUploading(false);
+      return;
     }
-
     const startTime = new Date(`1970-01-01T${formData.startTime}Z`);
     const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
 
     if (startTime >= endTime) {
       setFormError("End time must be later than start time");
+      setUploading(false);
       return;
     }
+
     try {
-      const docRef = await addDoc(collection(db, "events"), formData);
+      const imageUrl = await uploadImageAndGetURL();
+
+      const newEvent = { ...formData, image: imageUrl || "" };
+      const docRef = await addDoc(collection(db, "events"), newEvent);
+
       console.log("Document written with ID: ", docRef.id);
 
-      //Resetting form data after successful submission
       setFormData({
         date: "",
         startTime: "",
@@ -60,11 +91,13 @@ const EventModal: React.FC = () => {
         image: "",
         eventType: "public",
       });
-
+      setImageFile(null);
       setFormError(null);
     } catch (error) {
-      console.error("Error adding document: ", error);
-      setFormError("Error submitting form. Try again later."); // Display an error to the user
+      console.error("Error: ", error);
+      setFormError("Error submitting form. Try again later.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -110,7 +143,7 @@ const EventModal: React.FC = () => {
         </div>
         <div>
           <label htmlFor="image">Image:</label>
-          <input type="text" id="image" name="image" value={formData.image} onChange={handleChange} />
+          <input type="file" id="image" name="image" onChange={handleFileChange} />
         </div>
         <div>
           <label htmlFor="eventType">Event Type:</label>
@@ -120,8 +153,11 @@ const EventModal: React.FC = () => {
           </select>
         </div>
         {formError && <p style={{ color: "red" }}>{formError}</p>}
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={uploading}>
+          Submit
+        </button>
       </form>
+      {uploading && <p>Uploading Image...</p>}
     </div>
   );
 };
