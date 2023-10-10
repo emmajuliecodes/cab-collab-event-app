@@ -5,7 +5,8 @@ import { collection, addDoc } from "firebase/firestore";
 const EventModal: React.FC = () => {
   const [formData, setFormData] = useState({
     date: "",
-    time: "",
+    startTime: "",
+    endTime: "",
     attendees: "",
     invitees: "",
     location: "",
@@ -28,10 +29,11 @@ const EventModal: React.FC = () => {
       const docRef = await addDoc(collection(db, "events"), formData);
       console.log("Document written with ID: ", docRef.id);
 
-      // Optionally: Resetting form data after successful submission
+      //Resetting form data after successful submission
       setFormData({
         date: "",
-        time: "",
+        startTime: "",
+        endTime: "",
         attendees: "",
         invitees: "",
         location: "",
@@ -50,14 +52,18 @@ const EventModal: React.FC = () => {
   return (
     <div className="modal">
       <form onSubmit={handleSubmit}>
-        {/* Event form fields */}
         <div>
           <label htmlFor="date">Date:</label>
-          <input type="text" id="date" name="date" value={formData.date} onChange={handleChange} />
+          <input type="date" id="date" name="date" value={formData.date} onChange={handleChange} />
         </div>
         <div>
-          <label htmlFor="time">Time:</label>
-          <input type="text" id="time" name="time" value={formData.time} onChange={handleChange} />
+          <label htmlFor="startTime">Start Time:</label>
+          <input type="time" id="startTime" name="startTime" value={formData.startTime} onChange={handleChange} />
+        </div>
+
+        <div>
+          <label htmlFor="endTime">End Time:</label>
+          <input type="time" id="endTime" name="endTime" value={formData.endTime} onChange={handleChange} />
         </div>
         <div>
           <label htmlFor="attendees">Attendees:</label>
