@@ -9,7 +9,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { AuthContextProvider } from "./context/AuthContext.tsx";
 import Error404 from "./views/Error404.tsx";
 import Home from "./views/Home.tsx";
-import About from "./views/About.tsx";
+import FilterByCity from "./views/About.tsx";
 import Login from "./views/Login.tsx";
 import Events from "./views/EventsListView.tsx";
 import UserProfile from "./views/Profile.tsx";
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
 
 					{
 						path: "/about",
-						element: <About />,
+						element: <FilterByCity />,
 					},
 					{
 						path: "/profile",
