@@ -17,14 +17,31 @@ const EventModal: React.FC = () => {
     eventType: "public", // Default value
   });
 
+  const [formError, setFormError] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormError(null); // Clear errors upon change
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    //  Validation
+    for (const [key, value] of Object.entries(formData)) {
+      if (!value.trim()) {
+        setFormError(`Please provide a ${key}`);
+        return;
+      }
+    }
 
+    const startTime = new Date(`1970-01-01T${formData.startTime}Z`);
+    const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
+
+    if (startTime >= endTime) {
+      setFormError("End time must be later than start time");
+      return;
+    }
     try {
       const docRef = await addDoc(collection(db, "events"), formData);
       console.log("Document written with ID: ", docRef.id);
@@ -43,9 +60,11 @@ const EventModal: React.FC = () => {
         image: "",
         eventType: "public",
       });
+
+      setFormError(null);
     } catch (error) {
       console.error("Error adding document: ", error);
-      // Handle the error appropriately
+      setFormError("Error submitting form. Try again later."); // Display an error to the user
     }
   };
 
@@ -100,6 +119,7 @@ const EventModal: React.FC = () => {
             <option value="private">Private</option>
           </select>
         </div>
+        {formError && <p style={{ color: "red" }}>{formError}</p>}
         <button type="submit">Submit</button>
       </form>
     </div>
