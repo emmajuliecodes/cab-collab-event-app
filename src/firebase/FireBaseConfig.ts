@@ -1,20 +1,21 @@
-// Import the functions needed  from the SDKs
+// Import the functions you need from the SDKs you need
 import {initializeApp} from 'firebase/app';
 import {getAuth} from 'firebase/auth';
 import {getFirestore} from 'firebase/firestore';
 
-// app's Firebase configuration
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyDNorWmNoH9j_YHqdsi8fkAtDhjhcnG_B4',
-  authDomain: 'cab-collab-event-app.firebaseapp.com',
-  projectId: 'cab-collab-event-app',
-  storageBucket: 'cab-collab-event-app.appspot.com',
-  messagingSenderId: '711329593706',
-  appId: '1:711329593706:web:6af7536e7e21919e798d13',
+  apiKey: import.meta.env.VITE_APIKEY as string,
+  authDomain: import.meta.env.VITE_AUTHDOMAIN as string,
+  projectId: import.meta.env.VITE_PROJECTID as string,
+  storageBucket: import.meta.env.VITE_STORAGEBUCKET as string,
+  messagingSenderId: import.meta.env.VITE_MESSAGINGSENDERID as string,
+  appId: import.meta.env.VITE_APPID as string,
 };
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
+// Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);

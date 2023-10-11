@@ -1,35 +1,15 @@
-import { useState } from "react";
+import {type FormEvent, useContext} from 'react';
+import AuthForm from '../components/AuthRegisterForm';
+import {AuthContext} from '../context/AuthContext';
 
-import { Link } from "react-router-dom";
-import CreateUserForm from "../components/CreateUserForm";
-import { Users } from "../@types";
+const Login = () => {
+  const {handleRegister} = useContext(AuthContext);
 
-// NEEDS FIREBASE FUNCTIONALITY
+  return (
+    <div>
+      <AuthForm title={'Register'} handleSubmit={handleRegister} />
+    </div>
+  );
+};
 
-function Register() {
-	const [users, setUsers] = useState<Users>([]);
-
-	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				gap: "1em",
-			}}>
-			<h1>Register</h1>
-
-			<CreateUserForm setUsers={setUsers} users={users} />
-
-			<p>
-				Already have an account?{" "}
-				<Link to={"/login"} replace={true}>
-					Login
-				</Link>
-				!
-			</p>
-		</div>
-	);
-}
-
-export default Register;
+export default Login;

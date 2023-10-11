@@ -1,62 +1,129 @@
-import {createContext, useState, ReactNode, useEffect} from 'react';
-import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-import {User} from '../@types';
+import {createContext, useState, useEffect, type FormEvent} from 'react';
+import {
+  type User,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import {auth} from '../firebase/FireBaseConfig';
 
-//TODO: make changes to login interface and continue auth context with firebase
-
-interface DefaultValue {
-  user: null | User;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  register: (
+interface ContextType {
+  user: User | null;
+  handleLogin: (
+    e: FormEvent<HTMLFormElement>,
     email: string,
-    password: string,
-    username: string,
-    avatar: File | null
-  ) => Promise<void>;
+    password: string
+  ) => void;
+  logout: () => void;
+  handleRegister: (
+    e: FormEvent<HTMLFormElement>,
+    email: string,
+    password: string
+  ) => void;
+  isChecked: boolean;
 }
 
-const initialValue: DefaultValue = {
+const defaultValue: ContextType = {
   user: null,
-  setUser: () => {
-    throw new Error('context not implemented.');
-  },
-  login: () => {
-    throw new Error('context not implemented.');
+  handleLogin: () => {
+    throw Error('No provider');
   },
   logout: () => {
-    throw new Error('context not implemented.');
+    throw Error('No provider');
   },
-  register: () => {
-    throw new Error('context not implemented.');
+  handleRegister: () => {
+    throw Error('No provider');
   },
+  isChecked: false,
 };
-export const AuthContext = createContext<DefaultValue>(initialValue);
 
-export const AuthContextProvider = ({children}: {children: ReactNode}) => {
-  const [user, setUser] = useState<null | User>(null);
+export const AuthContext = createContext(defaultValue);
 
-  const login = async (email: string, password: string) => {
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password).catch((error) => {
-      console.error(error);
+interface Props {
+  children: React.ReactNode;
+}
+
+export const AuthContextProvider = (props: Props) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error);
+      });
+  };
+
+  const handleRegister = (
+    e: FormEvent<HTMLFormElement>,
+    email: string,
+    password: string
+  ) => {
+    e.preventDefault();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log('new user', user);
+        setUser(user);
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(error);
+      });
+  };
+
+  const handleLogin = (
+    e: FormEvent<HTMLFormElement>,
+    email: string,
+    password: string
+  ) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUser(user);
+        // ...
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(error);
+      });
+  };
+
+  const checkActiveUser = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        const uid = user.uid;
+        setUser(user);
+        // ...
+      } else {
+        setUser(null);
+        // User is signed out
+        // ...
+      }
+      setIsChecked(true);
     });
   };
 
-  const register = async () => {};
-
-  const logout = () => {};
-
-  const getActiveUser = async () => {};
-
   useEffect(() => {
-    getActiveUser().catch((e) => console.log(e));
+    checkActiveUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{user, setUser, login, logout, register}}>
-      {children}
+    <AuthContext.Provider
+      value={{user, handleLogin, logout, handleRegister, isChecked}}>
+      {props.children}
     </AuthContext.Provider>
   );
 };
