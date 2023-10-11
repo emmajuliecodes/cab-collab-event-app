@@ -57,14 +57,18 @@ function FilterByCity() {
 				<button onClick={HandleClick}>Click me</button>
 			</div>
 
-			{cityArray.map((e) => {
-				return (
-					<>
-						<p>Name: {e.eventName}</p>
-						<p>City: {e.city}</p>
-					</>
-				);
-			})}
+			{cityArray.length === 0 ? (
+				<p>No events available for this city - why not try somewhere else?</p>
+			) : (
+				cityArray.map((e) => {
+					return (
+						<>
+							<p>Name: {e.eventName}</p>
+							<p>City: {e.city}</p>
+						</>
+					);
+				})
+			)}
 		</>
 	);
 }
