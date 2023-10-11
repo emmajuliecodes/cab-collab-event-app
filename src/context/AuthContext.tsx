@@ -1,4 +1,5 @@
 import {createContext, useState, useEffect, type FormEvent} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {
   type User,
   createUserWithEmailAndPassword,
@@ -18,6 +19,7 @@ interface ContextType {
   logout: () => void;
   handleRegister: (
     e: FormEvent<HTMLFormElement>,
+    name: string,
     email: string,
     password: string
   ) => void;
@@ -47,6 +49,7 @@ interface Props {
 export const AuthContextProvider = (props: Props) => {
   const [user, setUser] = useState<User | null>(null);
   const [isChecked, setIsChecked] = useState(false);
+  const navigate = useNavigate();
 
   const logout = () => {
     signOut(auth)
@@ -61,6 +64,7 @@ export const AuthContextProvider = (props: Props) => {
 
   const handleRegister = (
     e: FormEvent<HTMLFormElement>,
+    name: string,
     email: string,
     password: string
   ) => {
@@ -69,8 +73,11 @@ export const AuthContextProvider = (props: Props) => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log('new user', user);
         setUser(user);
+        console.log('new user', user);
+        alert('success, you are registered');
+
+        navigate('/');
       })
       .catch((error) => {
         // const errorCode = error.code;
@@ -90,6 +97,9 @@ export const AuthContextProvider = (props: Props) => {
         // Signed in
         const user = userCredential.user;
         setUser(user);
+        console.log(user);
+        alert('signed in successfully');
+        navigate('/');
         // ...
       })
       .catch((error) => {

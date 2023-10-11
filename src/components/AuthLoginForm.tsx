@@ -1,4 +1,4 @@
-import React, {useState, type ChangeEvent, type FormEvent} from 'react';
+import React, {useState, type FormEvent} from 'react';
 
 type Props = {
   title: string;
@@ -18,13 +18,16 @@ const AuthForm = ({title, handleSubmit}: Props) => {
     <div>
       <h1>{title}</h1>
       <form onSubmit={(e) => handleSubmit(e, email, password)}>
+        <label htmlFor='email'>Email</label>
         <input
+          id='email'
           type='email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-
+        <label htmlFor='password'>Password</label>
         <input
+          id='password'
           type='password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}

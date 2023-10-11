@@ -4,10 +4,9 @@ type Props = {
   title: string;
   handleSubmit: (
     e: FormEvent<HTMLFormElement>,
-
+    name: string,
     email: string,
-    password: string,
-    name?: string
+    password: string
   ) => void;
 };
 
@@ -20,17 +19,23 @@ const AuthForm = ({title, handleSubmit}: Props) => {
     <div>
       <h1>{title}</h1>
       <form onSubmit={(e) => handleSubmit(e, name, email, password)}>
+        <label htmlFor='name'>Name</label>
         <input
+          type='name'
+          id='name'
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <label htmlFor='email'>Email</label>
+        <input
+          id='email'
           type='email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        <label htmlFor='password'>Password</label>
         <input
-          type='name'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
+          id='password'
           type='password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}

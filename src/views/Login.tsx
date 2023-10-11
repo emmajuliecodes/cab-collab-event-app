@@ -1,6 +1,7 @@
-import {type FormEvent, useContext} from 'react';
+import {useContext} from 'react';
 import AuthForm from '../components/AuthLoginForm';
 import {AuthContext} from '../context/AuthContext';
+// import {redirect} from 'react-router-dom';
 
 const Login = () => {
   const {handleLogin} = useContext(AuthContext);
