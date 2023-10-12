@@ -11,7 +11,7 @@ import Error404 from "./views/Error404.tsx";
 import Home from "./views/Home.tsx";
 import FilterByCity from "./views/About.tsx";
 import Login from "./views/Login.tsx";
-import Events from "./views/Events.tsx";
+import Events from "./views/EventsListView.tsx";
 import UserProfile from "./views/Profile.tsx";
 import WithNav from "./components/Layouts/WithNav.tsx";
 import EventDetailView from "./views/EventView.tsx";
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
 						element: <Login />,
 					},
 					{
-						path: "/eventById/:_id",
+						path: "/eventById/:id",
 						element: <EventDetailView />,
 					},
 
