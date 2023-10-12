@@ -1,137 +1,167 @@
 import React, { useState } from "react";
+import { db } from "../firebaseConfig";
+import { collection, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const EventModal: React.FC = () => {
-	const [formData, setFormData] = useState({
-		date: "",
-		time: "",
-		attendees: "",
-		invitees: "",
-		location: "",
-		description: "",
-		eventName: "",
-		host: "",
-		image: "",
-	});
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
-		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
-	};
+  const [formData, setFormData] = useState({
+    date: "",
+    startTime: "",
+    endTime: "",
+    attendees: "",
+    invitees: "",
+    location: "",
+    description: "",
+    eventName: "",
+    host: "",
+    image: "",
+    eventType: "public",
+  });
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		// Handle form submission here, you can access form data from formData state
-		// You can also send this data to a server or perform other actions as needed.
-	};
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-	return (
-		<div className="modal">
-			<form onSubmit={handleSubmit}>
-				{/* Event form fields */}
-				<div>
-					<label htmlFor="date">Date:</label>
-					<input
-						type="text"
-						id="date"
-						name="date"
-						value={formData.date}
-						onChange={handleChange}
-					/>
-				</div>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormError(null);
+  };
 
-				<div>
-					<label htmlFor="time">Time:</label>
-					<input
-						type="text"
-						id="time"
-						name="time"
-						value={formData.time}
-						onChange={handleChange}
-					/>
-				</div>
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setImageFile(file);
+  };
 
-				<div>
-					<label htmlFor="attendees">Attendees:</label>
-					<input
-						type="text"
-						id="attendees"
-						name="attendees"
-						value={formData.attendees}
-						onChange={handleChange}
-					/>
-				</div>
+  const uploadImageAndGetURL = async () => {
+    if (!imageFile) return null;
 
-				<div>
-					<label htmlFor="invitees">Invitees:</label>
-					<input
-						type="text"
-						id="invitees"
-						name="invitees"
-						value={formData.invitees}
-						onChange={handleChange}
-					/>
-				</div>
+    const storage = getStorage();
+    const storageRef = ref(storage, "images/" + imageFile.name);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-				<div>
-					<label htmlFor="location">Location:</label>
-					<input
-						type="text"
-						id="location"
-						name="location"
-						value={formData.location}
-						onChange={handleChange}
-					/>
-				</div>
+    return new Promise<string | null>((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        () => {},
+        (error) => reject(error),
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
+  };
 
-				<div>
-					<label htmlFor="description">Description:</label>
-					<textarea
-						id="description"
-						name="description"
-						value={formData.description}
-						onChange={handleChange}
-					/>
-				</div>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setUploading(true);
+    if (!imageFile) {
+      setFormError(`Please provide an image`);
+      setUploading(false);
+      return;
+    }
+    const startTime = new Date(`1970-01-01T${formData.startTime}Z`);
+    const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
 
-				<div>
-					<label htmlFor="eventName">Event Name:</label>
-					<input
-						type="text"
-						id="eventName"
-						name="eventName"
-						value={formData.eventName}
-						onChange={handleChange}
-					/>
-				</div>
+    if (startTime >= endTime) {
+      setFormError("End time must be later than start time");
+      setUploading(false);
+      return;
+    }
 
-				<div>
-					<label htmlFor="host">Host:</label>
-					<input
-						type="text"
-						id="host"
-						name="host"
-						value={formData.host}
-						onChange={handleChange}
-					/>
-				</div>
+    try {
+      const imageUrl = await uploadImageAndGetURL();
 
-				<div>
-					<label htmlFor="image">Image:</label>
-					<input
-						type="text"
-						id="image"
-						name="image"
-						value={formData.image}
-						onChange={handleChange}
-					/>
-				</div>
+      const newEvent = { ...formData, image: imageUrl || "" };
+      const docRef = await addDoc(collection(db, "events"), newEvent);
 
-				<button type="submit">Submit</button>
-			</form>
-		</div>
-	);
+      console.log("Document written with ID: ", docRef.id);
+
+      setFormData({
+        date: "",
+        startTime: "",
+        endTime: "",
+        attendees: "",
+        invitees: "",
+        location: "",
+        description: "",
+        eventName: "",
+        host: "",
+        image: "",
+        eventType: "public",
+      });
+      setImageFile(null);
+      setFormError(null);
+    } catch (error) {
+      console.error("Error: ", error);
+      setFormError("Error submitting form. Try again later.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="modal">
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="date">Date:</label>
+          <input type="date" id="date" name="date" value={formData.date} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="startTime">Start Time:</label>
+          <input type="time" id="startTime" name="startTime" value={formData.startTime} onChange={handleChange} />
+        </div>
+
+        <div>
+          <label htmlFor="endTime">End Time:</label>
+          <input type="time" id="endTime" name="endTime" value={formData.endTime} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="attendees">Attendees:</label>
+          <input type="text" id="attendees" name="attendees" value={formData.attendees} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="invitees">Invitees:</label>
+          <input type="text" id="invitees" name="invitees" value={formData.invitees} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="location">Location:</label>
+          <input type="text" id="location" name="location" value={formData.location} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="description">Description:</label>
+          <textarea id="description" name="description" value={formData.description} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="eventName">Event Name:</label>
+          <input type="text" id="eventName" name="eventName" value={formData.eventName} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="host">Host:</label>
+          <input type="text" id="host" name="host" value={formData.host} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="image">Image:</label>
+          <input type="file" id="image" name="image" onChange={handleFileChange} />
+        </div>
+        <div>
+          <label htmlFor="eventType">Event Type:</label>
+          <select id="eventType" name="eventType" value={formData.eventType} onChange={handleChange}>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </div>
+        {formError && <p style={{ color: "red" }}>{formError}</p>}
+        <button type="submit" disabled={uploading}>
+          Submit
+        </button>
+      </form>
+      {uploading && <p>Uploading Image...</p>}
+    </div>
+  );
+
 };
 
 export default EventModal;
