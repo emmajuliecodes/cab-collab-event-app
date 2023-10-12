@@ -25,7 +25,9 @@ export interface Event {
 	map_location: Location;
 	street_address: Location;
 	image: string;
-	id: string;
+	public: boolean;
 }
+
+// public or private - true fales - use for My Events
 
 export type Users = User[];
