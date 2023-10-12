@@ -1,7 +1,6 @@
 import "../App.css";
 
 function App() {
-	console.log();
 	return (
 		<>
 			<h1>It's the Final Project!</h1>
