@@ -92,6 +92,7 @@ export const AuthContextProvider = (props: Props) => {
 		password: string
 	) => {
 		e.preventDefault();
+		console.log("wearehere");
 		signInWithEmailAndPassword(auth, email, password)
 			.then((userCredential) => {
 				// Signed in
@@ -108,6 +109,7 @@ export const AuthContextProvider = (props: Props) => {
 				console.log(error);
 			});
 	};
+	console.log("testing");
 
 	const checkActiveUser = () => {
 		onAuthStateChanged(auth, (user) => {
@@ -116,6 +118,7 @@ export const AuthContextProvider = (props: Props) => {
 				// https://firebase.google.com/docs/reference/js/auth.user
 				const uid = user.uid;
 				setUser(user);
+				console.log(user, "user");
 				// ...
 			} else {
 				setUser(null);
