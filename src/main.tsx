@@ -68,7 +68,7 @@ const router = createBrowserRouter([
 						element: <Register />,
 					},
 					{
-						path: "/create-event",
+						path: "/listevent",
 						element: <EventModal />,
 					},
 				],
