@@ -4,7 +4,7 @@ function App() {
 	return (
 		<>
 			<h1>It's the Final Project!</h1>
-			<div className="card">
+			{/* <div className="card">
 				<iframe
 					width="560"
 					height="315"
@@ -13,7 +13,7 @@ function App() {
 					frameBorder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					allowFullScreen></iframe>
-			</div>
+			</div> */}
 		</>
 	);
 }
