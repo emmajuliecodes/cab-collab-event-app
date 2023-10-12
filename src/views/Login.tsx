@@ -1,3 +1,4 @@
+
 import {useContext} from 'react';
 import AuthForm from '../components/AuthLoginForm';
 import {AuthContext} from '../context/AuthContext';
@@ -11,6 +12,7 @@ const Login = () => {
       <AuthForm title={'Login'} handleSubmit={handleLogin} />
     </div>
   );
+
 };
 
 export default Login;

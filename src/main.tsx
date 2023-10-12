@@ -6,17 +6,20 @@ import './App.css';
 
 import {createBrowserRouter, RouterProvider, Outlet} from 'react-router-dom';
 
-import {AuthContextProvider} from './context/AuthContext.tsx';
-import Error404 from './views/Error404.tsx';
-import Home from './views/Home.tsx';
-import About from './views/About.tsx';
-import Login from './views/Login.tsx';
-import Events from './views/Events.tsx';
-import UserProfile from './views/Profile.tsx';
-import WithNav from './components/Layouts/WithNav.tsx';
-import EventView from './views/EventView.tsx';
-import WithFooter from './components/Layouts/Footer/WithFooter.tsx';
-import Register from './views/Register.tsx';
+
+import { AuthContextProvider } from "./context/AuthContext.tsx";
+import Error404 from "./views/Error404.tsx";
+import Home from "./views/Home.tsx";
+import About from "./views/About.tsx";
+import Login from "./views/Login.tsx";
+import Events from "./views/Events.tsx";
+import UserProfile from "./views/Profile.tsx";
+import WithNav from "./components/Layouts/WithNav.tsx";
+import EventView from "./views/EventView.tsx";
+import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
+import Register from "./views/Register.tsx";
+import EventModal from "./components/EventModal.tsx";
+
 
 const router = createBrowserRouter([
   {
@@ -65,6 +68,10 @@ const router = createBrowserRouter([
           {
             path: '/register',
             element: <Register />,
+          },
+          {
+            path: "/create-event",
+            element: <EventModal />,
           },
         ],
       },
