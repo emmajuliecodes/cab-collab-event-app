@@ -64,7 +64,6 @@ export const AuthContextProvider = (props: Props) => {
 
 	const handleRegister = (
 		e: FormEvent<HTMLFormElement>,
-		name: string,
 		email: string,
 		password: string
 	) => {
@@ -79,6 +78,13 @@ export const AuthContextProvider = (props: Props) => {
 
 				navigate("/");
 			})
+
+			// .then(() => {
+			// 	const uid = user.uid;
+
+			// }
+			// )
+
 			.catch((error) => {
 				// const errorCode = error.code;
 				// const errorMessage = error.message;
