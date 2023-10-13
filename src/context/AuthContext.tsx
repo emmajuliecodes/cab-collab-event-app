@@ -1,157 +1,142 @@
-import { createContext, useState, ReactNode, useEffect } from "react";
-import { NotOk, User } from "../@types";
+import { createContext, useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+	type User,
+	createUserWithEmailAndPassword,
+	onAuthStateChanged,
+	signOut,
+	signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../firebase/FirebaseConfig";
 
-interface DefaultValue {
-	user: null | User;
-	setUser: React.Dispatch<React.SetStateAction<User | null>>;
-	login: (email: string, password: string) => Promise<void>;
-	logout: () => void;
-	register: (
+interface ContextType {
+	user: User | null;
+	handleLogin: (
+		e: FormEvent<HTMLFormElement>,
 		email: string,
-		password: string,
-		username: string,
-		avatar: File | null
-	) => Promise<void>;
+		password: string
+	) => void;
+	logout: () => void;
+	handleRegister: (
+		e: FormEvent<HTMLFormElement>,
+		name: string,
+		email: string,
+		password: string
+	) => void;
+	isChecked: boolean;
 }
 
-interface RegisterResult {
-	user: User;
-	token: string;
-}
-
-interface LoginResult {
-	verified: boolean;
-	token: string;
-	user: User;
-}
-
-const initialValue: DefaultValue = {
+const defaultValue: ContextType = {
 	user: null,
-	setUser: () => {
-		throw new Error("context not implemented.");
-	},
-	login: () => {
-		throw new Error("context not implemented.");
+	handleLogin: () => {
+		throw Error("No provider");
 	},
 	logout: () => {
-		throw new Error("context not implemented.");
+		throw Error("No provider");
 	},
-	register: () => {
-		throw new Error("context not implemented.");
+	handleRegister: () => {
+		throw Error("No provider");
 	},
+	isChecked: false,
 };
-export const AuthContext = createContext<DefaultValue>(initialValue);
 
-export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-	const baseURL = import.meta.env.VITE_SERVER_BASE as string;
-	const [user, setUser] = useState<null | User>(null);
-	const redirect = useNavigate();
+export const AuthContext = createContext(defaultValue);
 
-	const login = async (email: string, password: string) => {
-		const myHeaders = new Headers();
-		myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-		const urlencoded = new URLSearchParams();
-		urlencoded.append("email", email);
-		urlencoded.append("password", password);
-		const requestOptions = {
-			method: "POST",
-			headers: myHeaders,
-			body: urlencoded,
-		};
-		try {
-			const response = await fetch(`${baseURL}api/users/login`, requestOptions);
-			if (!response.ok) {
-				const result = (await response.json()) as NotOk;
-				alert(result.error);
-			} else {
-				const result = (await response.json()) as LoginResult;
-				console.log(result);
-				setUser(result.user);
-				localStorage.setItem("token", result.token);
-				localStorage.setItem("user", JSON.stringify(result.user));
-				alert("login successful!");
-				redirect("/");
-				setTimeout(() => redirect("/"), 2000);
-			}
-		} catch (error) {
-			console.log("error", error);
-		}
-	};
+interface Props {
+	children: React.ReactNode;
+}
 
-	const register = async (
-		email: string,
-		password: string,
-		username: string,
-		avatar: File | null
-	) => {
-		const formData = new FormData();
-		formData.append("username", username);
-		formData.append("email", email);
-		formData.append("password", password);
-		if (avatar) {
-			formData.append("image_url", avatar);
-		}
-		const requestOptions = {
-			method: "POST",
-			body: formData,
-		};
-		try {
-			const response = await fetch(`${baseURL}api/users/new`, requestOptions);
-			if (response.ok) {
-				const result = (await response.json()) as RegisterResult;
-				const { token } = result as RegisterResult;
-				localStorage.setItem("token", token);
-				localStorage.setItem("user", JSON.stringify(result.user));
-				alert("Signup Successful, logging in...");
-				setUser(result.user);
-				setTimeout(() => redirect("/"), 2000);
-			} else {
-				const result = (await response.json()) as NotOk;
-				alert(`Something went wrong - ${result.error}`);
-			}
-		} catch (e) {
-			alert(` ${e as Error}`);
-		}
-	};
+export const AuthContextProvider = (props: Props) => {
+	const [user, setUser] = useState<User | null>(null);
+	const [isChecked, setIsChecked] = useState(false);
+	const navigate = useNavigate();
 
 	const logout = () => {
-		setUser(null);
-		localStorage.removeItem("token");
-		alert("logout successful");
-		redirect("/");
+		signOut(auth)
+			.then(() => {
+				setUser(null);
+			})
+			.catch((error) => {
+				// An error happened.
+				console.log(error);
+			});
 	};
 
-	const getActiveUser = async () => {
-		const token = localStorage.getItem("token");
-		if (token) {
-			try {
-				const myHeaders = new Headers();
-				myHeaders.append("Authorization", `Bearer ${token}`);
-				const requestOptions = {
-					method: "GET",
-					headers: myHeaders,
-				};
-				const response = await fetch(`${baseURL}api/users/me`, requestOptions);
-				const result = (await response.json()) as User;
-				setUser(result);
-				console.log("active user", result);
-			} catch (error) {
+	const handleRegister = (
+		e: FormEvent<HTMLFormElement>,
+		name: string,
+		email: string,
+		password: string
+	) => {
+		e.preventDefault();
+		createUserWithEmailAndPassword(auth, email, password)
+			.then((userCredential) => {
+				// Signed in
+				const user = userCredential.user;
+				setUser(user);
+				console.log("new user", user);
+				alert("success, you are registered");
+
+				navigate("/");
+			})
+			.catch((error) => {
+				// const errorCode = error.code;
+				// const errorMessage = error.message;
 				console.log(error);
+			});
+	};
+
+	const handleLogin = (
+		e: FormEvent<HTMLFormElement>,
+		email: string,
+		password: string
+	) => {
+		e.preventDefault();
+		console.log("wearehere");
+		signInWithEmailAndPassword(auth, email, password)
+			.then((userCredential) => {
+				// Signed in
+				const user = userCredential.user;
+				setUser(user);
+				console.log(user);
+				alert("signed in successfully");
+				navigate("/");
+				// ...
+			})
+			.catch((error) => {
+				// const errorCode = error.code;
+				// const errorMessage = error.message;
+				console.log(error);
+			});
+	};
+	console.log("testing");
+
+	const checkActiveUser = () => {
+		onAuthStateChanged(auth, (user) => {
+			if (user) {
+				// User is signed in, see docs for a list of available properties
+				// https://firebase.google.com/docs/reference/js/auth.user
+				const uid = user.uid;
+				setUser(user);
+				console.log(user, "user");
+				// ...
+			} else {
+				setUser(null);
+				// User is signed out
+				// ...
 			}
-		} else {
-			setUser(null);
-		}
+			setIsChecked(true);
+		});
 	};
 
 	useEffect(() => {
-		getActiveUser().catch((e) => console.log(e));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		checkActiveUser();
 	}, []);
 
 	return (
-		<AuthContext.Provider value={{ user, setUser, login, logout, register }}>
-			{children}
+		<AuthContext.Provider
+			value={{ user, handleLogin, logout, handleRegister, isChecked }}>
+			{props.children}
 		</AuthContext.Provider>
 	);
 };
