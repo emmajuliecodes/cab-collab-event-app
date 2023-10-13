@@ -8,7 +8,6 @@ const EventModal: React.FC = () => {
     date: "",
     startTime: "",
     endTime: "",
-    attendees: "",
     invitees: "",
     location: "",
     description: "",
@@ -82,7 +81,6 @@ const EventModal: React.FC = () => {
         date: "",
         startTime: "",
         endTime: "",
-        attendees: "",
         invitees: "",
         location: "",
         description: "",
@@ -116,10 +114,6 @@ const EventModal: React.FC = () => {
         <div>
           <label htmlFor="endTime">End Time:</label>
           <input type="time" id="endTime" name="endTime" value={formData.endTime} onChange={handleChange} />
-        </div>
-        <div>
-          <label htmlFor="attendees">Attendees:</label>
-          <input type="text" id="attendees" name="attendees" value={formData.attendees} onChange={handleChange} />
         </div>
         <div>
           <label htmlFor="invitees">Invitees:</label>
