@@ -4,6 +4,7 @@ export interface NotOk {
 
 export interface User {
 	_id: string;
+	name: string;
 	email: string;
 	username: string;
 	createdAt: string;
@@ -26,6 +27,7 @@ export interface Event {
 	street_address: Location;
 	image: string;
 	public: boolean;
+	creator_id: string;
 }
 
 // public or private - true fales - use for My Events
