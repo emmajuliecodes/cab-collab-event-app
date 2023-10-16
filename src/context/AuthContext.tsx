@@ -8,7 +8,7 @@ import {
 	signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth, db } from "../firebase/FirebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 
 interface ContextType {
 	user: User | null;
@@ -20,9 +20,9 @@ interface ContextType {
 	logout: () => void;
 	handleRegister: (
 		e: FormEvent<HTMLFormElement>,
-		name: string,
 		email: string,
-		password: string
+		password: string,
+		name: string
 	) => void;
 	isChecked: boolean;
 }
@@ -83,6 +83,12 @@ export const AuthContextProvider = (props: Props) => {
 				addDoc(collection(db, "users"), {
 					email: user.email,
 					uid: uid,
+					name: "",
+				});
+
+				const updateProfile = doc(collection(db, "users", "id"));
+				updateDoc(updateProfile, {
+					name: "",
 				});
 
 				navigate("/");
