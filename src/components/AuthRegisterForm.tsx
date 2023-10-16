@@ -4,28 +4,21 @@ type Props = {
 	title: string;
 	handleSubmit: (
 		e: FormEvent<HTMLFormElement>,
-		name: string,
+
 		email: string,
 		password: string
 	) => void;
 };
 
-const AuthForm = ({ title, handleSubmit }: Props) => {
+const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [name, setName] = useState("");
+	// const [name, setName] = useState("");
 	// const changeHandler = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
 	return (
 		<div>
 			<h1>{title}</h1>
-			<form onSubmit={(e) => handleSubmit(e, name, email, password)}>
-				<label htmlFor="name">Name</label>
-				<input
-					type="name"
-					id="name"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-				/>
+			<form onSubmit={(e) => handleSubmit(e, email, password)}>
 				<label htmlFor="email">Email</label>
 				<input
 					id="email"
@@ -46,4 +39,4 @@ const AuthForm = ({ title, handleSubmit }: Props) => {
 	);
 };
 
-export default AuthForm;
+export default AuthRegisterForm;

@@ -7,7 +7,8 @@ import {
 	signOut,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../firebase/FirebaseConfig";
+import { auth, db } from "../firebase/FirebaseConfig";
+import { collection, addDoc } from "firebase/firestore";
 
 interface ContextType {
 	user: User | null;
@@ -68,6 +69,7 @@ export const AuthContextProvider = (props: Props) => {
 		password: string
 	) => {
 		e.preventDefault();
+		console.log(e, email, password);
 		createUserWithEmailAndPassword(auth, email, password)
 			.then((userCredential) => {
 				// Signed in
@@ -76,14 +78,15 @@ export const AuthContextProvider = (props: Props) => {
 				console.log("new user", user);
 				alert("success, you are registered");
 
+				const uid = user.uid;
+
+				addDoc(collection(db, "users"), {
+					email: user.email,
+					uid: uid,
+				});
+
 				navigate("/");
 			})
-
-			// .then(() => {
-			// 	const uid = user.uid;
-
-			// }
-			// )
 
 			.catch((error) => {
 				// const errorCode = error.code;
