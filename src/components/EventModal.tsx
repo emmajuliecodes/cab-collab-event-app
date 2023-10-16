@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { db } from "../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
-import {
-	getStorage,
-	ref,
-	uploadBytesResumable,
-	getDownloadURL,
-} from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { AuthContext } from "../context/AuthContext";
 
 const EventModal: React.FC = () => {
+  const { user } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -61,6 +58,11 @@ const EventModal: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
+    if (!user) {
+      setFormError("You need to be logged in to create an event.");
+      setUploading(false);
+      return;
+    }
     if (!imageFile) {
       setFormError(`Please provide an image`);
       setUploading(false);
@@ -78,7 +80,7 @@ const EventModal: React.FC = () => {
     try {
       const imageUrl = await uploadImageAndGetURL();
 
-      const newEvent = { ...formData, image: imageUrl || "" };
+      const newEvent = { ...formData, image: imageUrl || "", creator_id: user?.uid || "" };
       const docRef = await addDoc(collection(db, "events"), newEvent);
 
       console.log("Document written with ID: ", docRef.id);
@@ -160,7 +162,6 @@ const EventModal: React.FC = () => {
       {uploading && <p>Uploading Image...</p>}
     </div>
   );
-
 };
 
 export default EventModal;
