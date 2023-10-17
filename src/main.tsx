@@ -1,8 +1,11 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
-import "./index.css";
-import "./App.css";
+import './index.css';
+import './App.css';
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {createBrowserRouter, RouterProvider, Outlet} from 'react-router-dom';
 
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
@@ -45,6 +48,7 @@ const router = createBrowserRouter([
 					{
 						path: "/events",
 						element: <EventsListView />,
+
 					},
 					{
 						path: "/login",
@@ -55,35 +59,36 @@ const router = createBrowserRouter([
 						element: <EventDetailView />,
 					},
 
-					{
-						path: "/about",
-						element: <FilterByCity />,
-					},
-					{
-						path: "/profile",
-						element: <UserProfile />,
-					},
-					{
-						path: "/register",
-						element: <Register />,
-					},
-					{
-						path: "/listevent",
-						element: <EventModal />,
-					},
-				],
-			},
+          {
+            path: '/about',
+            element: <FilterByCity />,
+          },
+          {
+            path: '/profile',
+            element: <UserProfile />,
+          },
+          {
+            path: '/register',
+            element: <Register />,
+          },
+          {
+            path: '/listevent',
+            element: <EventModal />,
+          },
+        ],
+      },
 
-			{
-				path: "*",
-				element: <Error404 />,
-			},
-		],
-	},
+      {
+        path: '*',
+        element: <Error404 />,
+      },
+    ],
+  },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-	<React.StrictMode>
-		<RouterProvider router={router} />
-	</React.StrictMode>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+    <ToastContainer />
+  </React.StrictMode>
 );

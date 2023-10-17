@@ -9,6 +9,7 @@ const Register = () => {
 		<div>
 			<AuthForm title={"Register"} handleSubmit={handleRegister} />
 		</div>
+		
 	);
 };
 
