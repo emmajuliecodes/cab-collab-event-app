@@ -3,7 +3,8 @@ import "../App.css";
 function App() {
 	return (
 		<>
-			<h1>It's the Final Project!</h1>
+			<h1>EventCraft</h1>
+			<h2>Much better than Facebook events...</h2>
 			{/* <div className="card">
 				<iframe
 					width="560"

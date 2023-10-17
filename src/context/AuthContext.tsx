@@ -1,6 +1,7 @@
 import {createContext, useState, useEffect, type FormEvent} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {
+
   type User,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -25,6 +26,7 @@ interface ContextType {
     password: string
   ) => void;
   isChecked: boolean;
+
 }
 
 const defaultValue: ContextType = {
@@ -109,6 +111,7 @@ export const AuthContextProvider = (props: Props) => {
         console.log(error);
       });
   };
+
 
   const checkActiveUser = () => {
     onAuthStateChanged(auth, (user) => {
