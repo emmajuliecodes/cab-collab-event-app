@@ -45,6 +45,7 @@ const router = createBrowserRouter([
 					{
 						path: "/events",
 						element: <EventsListView />,
+
 					},
 					{
 						path: "/login",
