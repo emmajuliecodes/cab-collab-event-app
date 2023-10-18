@@ -1,6 +1,6 @@
 // src/services/useFirebaseStorage.ts
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { app } from "./firebaseConfig";
+import { app } from "./firebase/FirebaseConfig";
 
 const storage = getStorage(app);
 
