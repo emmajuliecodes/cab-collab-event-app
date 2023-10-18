@@ -35,7 +35,7 @@ const router = createBrowserRouter([
             <WithNav>
               <Outlet />
             </WithNav>
-            <WithFooter />x
+            <WithFooter />
           </>
         ),
         children: [
