@@ -12,6 +12,10 @@
 		"deploy": "firebase deploy"
 	},
 	"dependencies": {
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@mui/icons-material": "^5.14.14",
+		"@mui/material": "^5.14.14",
 		"firebase": "^10.4.0",
 		"firebase-tools": "^12.7.0",
 		"react": "^18.2.0",
