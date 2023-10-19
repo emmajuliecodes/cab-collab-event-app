@@ -20,6 +20,8 @@ import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
 import Register from "./views/Register.tsx";
 import EventModal from "./components/EventModal.tsx";
 
+import FilterPublic from "./views/Testing.tsx";
+
 const router = createBrowserRouter([
 	{
 		element: (
@@ -60,6 +62,12 @@ const router = createBrowserRouter([
 						path: "/about",
 						element: <FilterByCity />,
 					},
+
+					{
+						path: "/testing",
+						element: <FilterPublic />,
+					},
+
 					{
 						path: "/profile",
 						element: <UserProfile />,
