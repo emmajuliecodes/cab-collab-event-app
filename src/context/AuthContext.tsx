@@ -7,7 +7,7 @@ import {
 	signOut,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
+import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/FirebaseConfig";
 import { toast } from "react-toastify";
 
@@ -21,10 +21,10 @@ interface ContextType {
 	logout: () => void;
 	handleRegister: (
 		e: FormEvent<HTMLFormElement>,
+
 		email: string,
 		password: string
 	) => void;
-	handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
 	isChecked: boolean;
 }
 
@@ -37,9 +37,6 @@ const defaultValue: ContextType = {
 		throw Error("No provider");
 	},
 	handleRegister: () => {
-		throw Error("No provider");
-	},
-	handleUpdate: () => {
 		throw Error("No provider");
 	},
 	isChecked: false,
@@ -86,7 +83,15 @@ export const AuthContextProvider = (props: Props) => {
 				addDoc(collection(db, "users"), {
 					email: user.email,
 					uid: uid,
+					name: "",
 				});
+
+				const updateUserDoc = doc(db, "users", "id");
+				updateDoc(updateUserDoc, {
+					name: "",
+				});
+
+				navigate("/");
 			})
 			.catch((error) => {
 				// const errorCode = error.code;
@@ -94,21 +99,6 @@ export const AuthContextProvider = (props: Props) => {
 				console.log(error);
 			});
 	};
-
-	async function handleUpdate() {
-		try {
-			const updateUser = doc(db, "users", "id");
-
-			await updateDoc(updateUser, {
-				name: "Yet another test run",
-			});
-
-			toast.success("Success, you have updated your profile");
-		} catch (e) {
-			console.error("Error adding document: ", e);
-		}
-		navigate("/");
-	}
 
 	const handleLogin = (
 		e: FormEvent<HTMLFormElement>,
@@ -157,14 +147,7 @@ export const AuthContextProvider = (props: Props) => {
 
 	return (
 		<AuthContext.Provider
-			value={{
-				user,
-				handleLogin,
-				logout,
-				handleRegister,
-				handleUpdate,
-				isChecked,
-			}}>
+			value={{ user, handleLogin, logout, handleRegister, isChecked }}>
 			{props.children}
 		</AuthContext.Provider>
 	);
