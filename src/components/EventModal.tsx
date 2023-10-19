@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { db } from "../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
-import {
-	getStorage,
-	ref,
-	uploadBytesResumable,
-	getDownloadURL,
-} from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { UsersContext } from "../context/UsersContext";
+import { get } from "firebase/database";
 
 const EventModal: React.FC = () => {
-
   const [formData, setFormData] = useState({
     date: "",
     startTime: "",
@@ -23,6 +19,10 @@ const EventModal: React.FC = () => {
     eventType: "public",
   });
 
+  const { getAllUsers, users } = useContext(UsersContext);
+
+  console.log("Get my users, btich", users);
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -31,11 +31,6 @@ const EventModal: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setFormError(null);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    setImageFile(file);
   };
 
   const uploadImageAndGetURL = async () => {
@@ -58,26 +53,27 @@ const EventModal: React.FC = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setUploading(true);
-    if (!imageFile) {
-      setFormError(`Please provide an image`);
+  const startEndLogic = (startingTime: Date, endingTime: Date): void => {
+    if (startingTime >= endingTime) {
+      setFormError("End time must be later than start time");
       setUploading(false);
-      return;
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     const startTime = new Date(`1970-01-01T${formData.startTime}Z`);
     const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
-
-    if (startTime >= endTime) {
-      setFormError("End time must be later than start time");
+    e.preventDefault();
+    setUploading(true);
+    startEndLogic(startTime, endTime);
+    if (!imageFile) {
+      setFormError(`Please provide an image`);
       setUploading(false);
       return;
     }
 
     try {
       const imageUrl = await uploadImageAndGetURL();
-
       const newEvent = { ...formData, image: imageUrl || "" };
       const docRef = await addDoc(collection(db, "events"), newEvent);
 
@@ -104,6 +100,10 @@ const EventModal: React.FC = () => {
       setUploading(false);
     }
   };
+
+  useEffect(() => {
+    getAllUsers();
+  }, []);
 
   return (
     <div className="modal">
@@ -143,7 +143,15 @@ const EventModal: React.FC = () => {
         </div>
         <div>
           <label htmlFor="image">Image:</label>
-          <input type="file" id="image" name="image" onChange={handleFileChange} />
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={(e) => {
+              const file = e.target.files ? e.target.files[0] : null;
+              setImageFile(file);
+            }}
+          />
         </div>
         <div>
           <label htmlFor="eventType">Event Type:</label>
@@ -160,7 +168,6 @@ const EventModal: React.FC = () => {
       {uploading && <p>Uploading Image...</p>}
     </div>
   );
-
 };
 
 export default EventModal;
