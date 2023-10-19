@@ -5,11 +5,14 @@ import { db } from "../firebase/FirebaseConfig";
 
 interface FirebaseUser {
   id: string;
-  email?: string;
-  uid?: string;
-  name?: string;
-  city?: string;
-  phone?: string;
+  name: string;
+  phone: string;
+  email: string;
+  city: string;
+  attending: string[];
+  declined: string[];
+  invites: string[];
+  uid: string;
 }
 
 interface ContextType {
@@ -47,12 +50,22 @@ export const UsersContextProvider = (props: Props) => {
   const getAllUsers = async () => {
     const userRef = collection(db, "users"); // "users" is the name of the collection
     const userSnapshot = await getDocs(userRef);
+    const usersFirebase: FirebaseUser[] = userSnapshot.docs.map((doc) => {
+      const data = doc.data();
 
-    const usersFirebase: FirebaseUser[] = userSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    // console.log(usersFirebase);
+      return {
+        id: doc.id,
+        name: data.name || "",
+        phone: data.phone || "",
+        email: data.email || "",
+        city: data.city || "",
+        attending: data.attending || [],
+        declined: data.declined || [],
+        invites: data.invites || [],
+        uid: data.uid || "",
+      };
+    });
+    console.log(usersFirebase);
     setUsers(usersFirebase);
   };
 

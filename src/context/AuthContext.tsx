@@ -14,12 +14,7 @@ interface ContextType {
   user: User | null;
   handleLogin: (e: FormEvent<HTMLFormElement>, email: string, password: string) => void;
   logout: () => void;
-  handleRegister: (
-    e: FormEvent<HTMLFormElement>,
-
-    email: string,
-    password: string
-  ) => void;
+  handleRegister: (e: FormEvent<HTMLFormElement>, name: string, email: string, password: string) => void;
   isChecked: boolean;
 }
 
