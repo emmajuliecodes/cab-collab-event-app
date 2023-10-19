@@ -10,14 +10,30 @@ import {
 import {
   collection,
   addDoc,
+  getDocs,
+  query,
+  where,
   // updateDoc,
   // doc,
 } from 'firebase/firestore';
 import {auth, db} from '../firebase/FirebaseConfig';
 import {toast} from 'react-toastify';
 
+export interface UserProfile {
+  name: string;
+  phone: string;
+  email: string;
+  city: string;
+  attending: string[];
+  declined: string[];
+  invites: string[];
+  uid: string;
+}
+
 interface ContextType {
   user: User | null;
+  userData?: UserProfile;
+  getUserProfileByUID: (uid: string) => Promise<void>;
   handleLogin: (
     e: FormEvent<HTMLFormElement>,
     email: string,
@@ -26,7 +42,7 @@ interface ContextType {
   logout: () => void;
   handleRegister: (
     e: FormEvent<HTMLFormElement>,
-
+    name: string,
     email: string,
     password: string
   ) => void;
@@ -35,7 +51,11 @@ interface ContextType {
 
 const defaultValue: ContextType = {
   user: null,
+  userData: undefined,
   handleLogin: () => {
+    throw Error('No provider');
+  },
+  getUserProfileByUID: () => {
     throw Error('No provider');
   },
   logout: () => {
@@ -55,6 +75,7 @@ interface Props {
 
 export const AuthContextProvider = (props: Props) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserProfile | undefined>(undefined);
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
@@ -70,23 +91,9 @@ export const AuthContextProvider = (props: Props) => {
       });
   };
 
-  // const logout = () => {
-  //   const user = auth.currentUser;
-
-  //   if (user) {
-  //     signOut(auth)
-  //       .then(() => {
-  //         setUser(null);
-  //         toast.info('Logged out');
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
-  // };
-
   const handleRegister = (
     e: FormEvent<HTMLFormElement>,
+    name: string,
     email: string,
     password: string
   ) => {
@@ -99,11 +106,15 @@ export const AuthContextProvider = (props: Props) => {
         console.log('new user', user);
 
         toast.success('Success, you are registered');
-        const uid = user.uid;
         addDoc(collection(db, 'users'), {
           email: user.email,
-          uid: uid,
-          name: '',
+          uid: user.uid,
+          name: name,
+          city: '',
+          phone: '',
+          invites: [''],
+          declined: [''],
+          attending: [''],
         });
 
         navigate('/');
@@ -138,31 +149,50 @@ export const AuthContextProvider = (props: Props) => {
       });
   };
 
-  const checkActiveUser = () => {
+  const checkActiveUser = async () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
-        // const uid = user.uid;
         setUser(user);
-        console.log(user, 'user');
-        // ...
       } else {
         setUser(null);
-        // User is signed out
-        // ...
       }
       setIsChecked(true);
     });
   };
+  //TODO: Find out why the func is not assigning user profile details to the userData setState
+  const getUserProfileByUID = async (uid: string) => {
+    try {
+      const usersCollection = collection(db, 'users');
+      const q = query(usersCollection, where('uid', '==', uid));
+      const querySnapshot = await getDocs(q);
+      // Assuming there's only one document with the same UID
+      const userDoc = querySnapshot.docs[0];
+      const userData = userDoc.data();
+      console.log('data1', userData);
+      setUserData(userData as UserProfile);
+    } catch (error) {
+      console.error('Error finding user by UID:', error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
     checkActiveUser();
+    if (user) getUserProfileByUID(user.uid);
+    console.log('d2', userData);
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{user, handleLogin, logout, handleRegister, isChecked}}>
+      value={{
+        user,
+        handleLogin,
+        userData,
+        getUserProfileByUID,
+        logout,
+        handleRegister,
+        isChecked,
+      }}>
       {props.children}
     </AuthContext.Provider>
   );
