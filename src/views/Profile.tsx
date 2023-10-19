@@ -1,11 +1,13 @@
 import {useContext, useEffect, useState} from 'react';
 import {db} from '../firebase/FirebaseConfig';
 import {collection, getDocs, query, where} from 'firebase/firestore';
-import {AuthContext, UserProfile} from '../context/AuthContext';
+import {AuthContext, UserProfileData} from '../context/AuthContext';
 
 const Profile = () => {
   const {user} = useContext(AuthContext);
-  const [userData, setUserData] = useState<UserProfile | undefined>(undefined);
+  const [userData, setUserData] = useState<UserProfileData | undefined>(
+    undefined
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
@@ -17,7 +19,7 @@ const Profile = () => {
       // Assuming there's only one document with the same UID
       const userDoc = querySnapshot.docs[0];
       const userData = userDoc.data();
-      setUserData(userData as UserProfile);
+      setUserData(userData as UserProfileData);
     } catch (error) {
       console.error('Error finding user by UID:', error);
       throw error;
@@ -27,7 +29,6 @@ const Profile = () => {
     if (user) findUserByUID(user.uid);
   }, []);
 
-  // Added user as a dependency
   if (loading) {
     return <p>Loading...</p>;
   }

@@ -19,7 +19,7 @@ import {
 import {auth, db} from '../firebase/FirebaseConfig';
 import {toast} from 'react-toastify';
 
-export interface UserProfile {
+export interface UserProfileData {
   name: string;
   phone: string;
   email: string;
@@ -32,7 +32,7 @@ export interface UserProfile {
 
 interface ContextType {
   user: User | null;
-  userData?: UserProfile;
+  userData?: UserProfileData;
   getUserProfileByUID: (uid: string) => Promise<void>;
   handleLogin: (
     e: FormEvent<HTMLFormElement>,
@@ -75,7 +75,9 @@ interface Props {
 
 export const AuthContextProvider = (props: Props) => {
   const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<UserProfile | undefined>(undefined);
+  const [userData, setUserData] = useState<UserProfileData | undefined>(
+    undefined
+  );
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
@@ -169,7 +171,7 @@ export const AuthContextProvider = (props: Props) => {
       const userDoc = querySnapshot.docs[0];
       const userData = userDoc.data();
       console.log('data1', userData);
-      setUserData(userData as UserProfile);
+      setUserData(userData as UserProfileData);
     } catch (error) {
       console.error('Error finding user by UID:', error);
       throw error;
