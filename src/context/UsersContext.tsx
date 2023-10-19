@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { createContext, useState, useEffect, type FormEvent } from "react";
+import { createContext, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/FirebaseConfig";
 

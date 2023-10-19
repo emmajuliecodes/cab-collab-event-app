@@ -3,7 +3,7 @@ import { db } from "../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { UsersContext } from "../context/UsersContext";
-import { get } from "firebase/database";
+import {} from "firebase/database";
 
 const EventModal: React.FC = () => {
   const [formData, setFormData] = useState({
