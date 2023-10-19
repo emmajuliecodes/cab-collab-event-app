@@ -60,7 +60,7 @@ export const AuthContextProvider = (props: Props) => {
       });
   };
 
-  const handleRegister = (e: FormEvent<HTMLFormElement>, email: string, password: string) => {
+  const handleRegister = (e: FormEvent<HTMLFormElement>, email: string, password: string, name: string) => {
     e.preventDefault();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -72,9 +72,13 @@ export const AuthContextProvider = (props: Props) => {
         toast.success("Success, you are registered");
         const uid = user.uid;
         addDoc(collection(db, "users"), {
-          email: user.email,
-          uid: uid,
-          name: "",
+          uid: user.uid,
+          name: name,
+          city: "",
+          phone: "",
+          invites: [""],
+          declined: [""],
+          attending: [""],
         });
 
         navigate("/");
