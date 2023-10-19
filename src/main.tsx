@@ -14,6 +14,7 @@ import FilterByCity from "./views/About.tsx";
 import Login from "./views/Login.tsx";
 import EventsListView from "./views/EventsListView.tsx";
 import UserProfile from "./views/Profile.tsx";
+import UpdateProfile from "./components/UpdateProfileForm.tsx";
 import WithNav from "./components/Layouts/WithNav.tsx";
 import EventDetailView from "./views/EventDetailView.tsx";
 import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
@@ -64,6 +65,11 @@ const router = createBrowserRouter([
 						path: "/profile",
 						element: <UserProfile />,
 					},
+					{
+						path: "/updateProfile",
+						element: <UpdateProfile />,
+					},
+
 					{
 						path: "/register",
 						element: <Register />,

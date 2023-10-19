@@ -13,12 +13,10 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	// const changeHandler = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
 	return (
 		<div>
 			<h1>{title}</h1>
 			<form onSubmit={(e) => handleSubmit(e, email, password)}>
-				<br></br>
 				<label htmlFor="email">Email</label>
 				<input
 					placeholder="add your email"
