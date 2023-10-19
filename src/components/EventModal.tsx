@@ -2,8 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { db } from "../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { UsersContext } from "../context/UsersContext";
+import { FirebaseUser, UsersContext } from "../context/UsersContext";
 import {} from "firebase/database";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const EventModal: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -20,9 +27,7 @@ const EventModal: React.FC = () => {
   });
 
   const { getAllUsers, users } = useContext(UsersContext);
-
-  console.log("Get my users, btich", users);
-
+  const [selectedUsers, setSelectedUsers] = useState<FirebaseUser[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -103,7 +108,8 @@ const EventModal: React.FC = () => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+    console.log("selected", selectedUsers);
+  }, [selectedUsers]);
 
   return (
     <div className="modal">
@@ -122,8 +128,27 @@ const EventModal: React.FC = () => {
           <input type="time" id="endTime" name="endTime" value={formData.endTime} onChange={handleChange} />
         </div>
         <div>
-          <label htmlFor="invitees">Invitees:</label>
-          <input type="text" id="invitees" name="invitees" value={formData.invitees} onChange={handleChange} />
+          <Autocomplete
+            multiple
+            id="checkboxes-tags-demo"
+            options={users || []}
+            value={selectedUsers}
+            onChange={(e, newValue) => {
+              setSelectedUsers(newValue);
+            }}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option.name}
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
+                <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.name}
+              </li>
+            )}
+            style={{ width: 500 }}
+            renderInput={(params) => <TextField {...params} label="Checkboxes" placeholder="Favorites" />}
+          />
+          {/* <label htmlFor="invitees">Invitees:</label>
+          <input type="text" id="invitees" name="invitees" value={formData.invitees} onChange={handleChange} /> */}
         </div>
         <div>
           <label htmlFor="location">Location:</label>
