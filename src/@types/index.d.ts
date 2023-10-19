@@ -4,7 +4,7 @@ export interface NotOk {
 
 export interface User {
 	_id: string;
-	displayName: string;
+	name: string;
 	email: string;
 	username: string;
 	createdAt: string;

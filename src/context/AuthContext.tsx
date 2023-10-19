@@ -7,7 +7,7 @@ import {
 	signOut,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, doc, addDoc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/FirebaseConfig";
 import { toast } from "react-toastify";
 
@@ -25,6 +25,7 @@ interface ContextType {
 		email: string,
 		password: string
 	) => void;
+	handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
 	isChecked: boolean;
 }
 
@@ -39,6 +40,10 @@ const defaultValue: ContextType = {
 	handleRegister: () => {
 		throw Error("No provider");
 	},
+	handleUpdate: () => {
+		throw Error("context not implemented.");
+	},
+
 	isChecked: false,
 };
 
@@ -86,11 +91,6 @@ export const AuthContextProvider = (props: Props) => {
 					name: "",
 				});
 
-				const updateUserDoc = doc(db, "users", "id");
-				updateDoc(updateUserDoc, {
-					name: "",
-				});
-
 				navigate("/");
 			})
 			.catch((error) => {
@@ -99,6 +99,21 @@ export const AuthContextProvider = (props: Props) => {
 				console.log(error);
 			});
 	};
+
+	async function handleUpdate() {
+		try {
+			const updateUser = doc(db, "users", "id");
+
+			await updateDoc(updateUser, {
+				name: "Yet another test run",
+			});
+
+			toast.success("Success, you have updated your profile");
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+		navigate("/");
+	}
 
 	const handleLogin = (
 		e: FormEvent<HTMLFormElement>,
@@ -147,7 +162,14 @@ export const AuthContextProvider = (props: Props) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ user, handleLogin, logout, handleRegister, isChecked }}>
+			value={{
+				user,
+				handleLogin,
+				logout,
+				handleRegister,
+				handleUpdate,
+				isChecked,
+			}}>
 			{props.children}
 		</AuthContext.Provider>
 	);
