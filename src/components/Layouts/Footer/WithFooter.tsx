@@ -1,11 +1,11 @@
 import Footer from "./Footer";
 
 const WithFooter = () => {
-  return (
-    <>
-      <Footer />
-    </>
-  );
+	return (
+		<>
+			<Footer />
+		</>
+	);
 };
 
 export default WithFooter;

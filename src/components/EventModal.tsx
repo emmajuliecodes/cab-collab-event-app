@@ -1,15 +1,8 @@
 import React, { useState } from "react";
 import { db } from "../firebase/FirebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
-import {
-	getStorage,
-	ref,
-	uploadBytesResumable,
-	getDownloadURL,
-} from "firebase/storage";
-
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 const EventModal: React.FC = () => {
-
   const [formData, setFormData] = useState({
     date: "",
     startTime: "",
@@ -160,7 +153,6 @@ const EventModal: React.FC = () => {
       {uploading && <p>Uploading Image...</p>}
     </div>
   );
-
 };
 
 export default EventModal;
