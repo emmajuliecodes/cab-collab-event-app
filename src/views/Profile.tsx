@@ -41,12 +41,28 @@ const Profile = () => {
     <div>
       <h1>User Profiles</h1>
       <div>
-        {userData &&
-          Object.entries(userData).map(([key, value]) => (
-            <p key={key}>
-              <strong>{key}:</strong> {value}
-            </p>
-          ))}
+        {userData && (
+          // Object.entries(userData).map(([key, value]) => (
+          //   <p key={key}>
+          //     <strong>{key}:</strong> {value}
+          //   </p>
+          // ))
+          <>
+            {/* // Object.entries(userData).map(([key, value])( //{' '} */}
+            {/* <p key={key}>
+              // <strong>{key}:</strong> {value}
+              //{' '}
+            </p> */}
+            {/* // )) */}
+            <p>Name: {userData.name.toUpperCase()}</p>
+            <p>Email: {userData.email}</p>
+            <p>City: {userData.city}</p>
+            <p>My Events: {userData.myEvents}</p>
+            <p>Invites: {userData.invites} </p>
+            <p>Attending: {userData.attending}</p>
+            <p>Declined: {userData.declined}</p>
+          </>
+        )}
       </div>
     </div>
   );

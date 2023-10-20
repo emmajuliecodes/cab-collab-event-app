@@ -24,6 +24,7 @@ export interface UserProfileData {
   phone: string;
   email: string;
   city: string;
+  myEvents: string[];
   attending: string[];
   declined: string[];
   invites: string[];
@@ -114,6 +115,7 @@ export const AuthContextProvider = (props: Props) => {
           name: name,
           city: '',
           phone: '',
+          myEvents: [''],
           invites: [''],
           declined: [''],
           attending: [''],
