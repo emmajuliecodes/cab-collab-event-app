@@ -15,6 +15,7 @@ export interface User {
 export interface Event {
 	date: string;
 	time: string;
+	eventType: string;
 	attendees: Array[];
 	invitees: Array[];
 	declined: Array[];
