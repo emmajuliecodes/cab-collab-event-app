@@ -12,7 +12,6 @@ type Props = {
 const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [name, setName] = useState("");
 
 	return (
 		<div>
@@ -36,15 +35,7 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 					onChange={(e) => setPassword(e.target.value)}
 				/>
 				<br></br>
-				<label htmlFor="name">Name </label>
-				<input
-					placeholder="add your name"
-					id="name"
-					type="name"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-				/>
-				<br></br>
+
 				<button type="submit">{title}</button>
 			</form>
 		</div>

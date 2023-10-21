@@ -22,8 +22,7 @@ interface ContextType {
 	handleRegister: (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
-		password: string,
-		name: string
+		password: string
 	) => void;
 	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
 	isChecked: boolean;
@@ -40,9 +39,6 @@ const defaultValue: ContextType = {
 	handleRegister: () => {
 		throw Error("No provider");
 	},
-	// handleUpdate: () => {
-	// 	throw Error("context not implemented.");
-	// },
 
 	isChecked: false,
 };
