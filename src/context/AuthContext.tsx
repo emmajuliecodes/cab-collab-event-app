@@ -21,11 +21,11 @@ interface ContextType {
 	logout: () => void;
 	handleRegister: (
 		e: FormEvent<HTMLFormElement>,
-
 		email: string,
-		password: string
+		password: string,
+		name: string
 	) => void;
-	handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
+	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
 	isChecked: boolean;
 }
 
@@ -40,9 +40,9 @@ const defaultValue: ContextType = {
 	handleRegister: () => {
 		throw Error("No provider");
 	},
-	handleUpdate: () => {
-		throw Error("context not implemented.");
-	},
+	// handleUpdate: () => {
+	// 	throw Error("context not implemented.");
+	// },
 
 	isChecked: false,
 };
@@ -74,6 +74,7 @@ export const AuthContextProvider = (props: Props) => {
 		e: FormEvent<HTMLFormElement>,
 		email: string,
 		password: string
+		// name: string
 	) => {
 		e.preventDefault();
 		createUserWithEmailAndPassword(auth, email, password)
@@ -83,7 +84,6 @@ export const AuthContextProvider = (props: Props) => {
 				setUser(user);
 				console.log("new user", user);
 
-				toast.success("Success, you are registered");
 				const uid = user.uid;
 				addDoc(collection(db, "users"), {
 					email: user.email,
@@ -91,7 +91,13 @@ export const AuthContextProvider = (props: Props) => {
 					name: "",
 				});
 
-				navigate("/");
+				const updateUser = doc(db, "users", "id");
+
+				updateDoc(updateUser, {
+					name: "",
+				});
+
+				toast.success("Success, you are registered");
 			})
 			.catch((error) => {
 				// const errorCode = error.code;
@@ -100,20 +106,19 @@ export const AuthContextProvider = (props: Props) => {
 			});
 	};
 
-	async function handleUpdate() {
-		try {
-			const updateUser = doc(db, "users", "id");
+	// async function handleUpdate() {
+	// 	try {
+	// 		const updateUser = doc(db, "users", "id");
 
-			await updateDoc(updateUser, {
-				name: "Yet another test run",
-			});
-
-			toast.success("Success, you have updated your profile");
-		} catch (e) {
-			console.error("Error adding document: ", e);
-		}
-		navigate("/");
-	}
+	// 		await updateDoc(updateUser, {
+	// 			name: "",
+	// 		});
+	// 		toast.success("Success, you have a name");
+	// 		navigate("/");
+	// 	} catch (e) {
+	// 		console.error("Error adding document: ", e);
+	// 	}
+	// }
 
 	const handleLogin = (
 		e: FormEvent<HTMLFormElement>,
@@ -167,7 +172,7 @@ export const AuthContextProvider = (props: Props) => {
 				handleLogin,
 				logout,
 				handleRegister,
-				handleUpdate,
+
 				isChecked,
 			}}>
 			{props.children}
