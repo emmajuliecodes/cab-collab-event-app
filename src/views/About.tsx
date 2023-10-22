@@ -1,7 +1,7 @@
 import { db } from "../firebase/FirebaseConfig";
 import {
-	DocumentData,
-	Query,
+	// DocumentData,
+	// Query,
 	collection,
 	getDocs,
 	query,
@@ -9,18 +9,14 @@ import {
 } from "firebase/firestore";
 import { Event } from "../@types";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 function FilterByCity() {
 	const [cityArray, setCityArray] = useState<(Event & { id: string })[]>([]);
 	const [inputValue, setInputValue] = useState("");
 
-	useEffect(() => {
-		const q = query(collection(db, "events"));
-		fetchByCity(q).catch((e) => console.log(e));
-	}, []);
-
-	const fetchByCity = async (q: Query<DocumentData, DocumentData>) => {
+	const fetchByCity = useCallback(async () => {
+		const q = query(collection(db, "events"), where("city", "==", inputValue));
 		console.log(inputValue, "inputvalue");
 		const querySnapshot = await getDocs(q);
 		console.log("querySnapshot", querySnapshot);
@@ -33,12 +29,15 @@ function FilterByCity() {
 
 		setCityArray(foundArray);
 		console.log(foundArray, "foundArray");
-	};
+	}, [inputValue]);
 
 	const HandleClick = () => {
-		const q = query(collection(db, "events"), where("city", "==", inputValue));
-		fetchByCity(q).catch((e) => console.log(e));
+		fetchByCity().catch((e) => console.log(e));
 	};
+
+	useEffect(() => {
+		fetchByCity().catch((e) => console.log(e));
+	}, [fetchByCity]);
 
 	return (
 		<>
