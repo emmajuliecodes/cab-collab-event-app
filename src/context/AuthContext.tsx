@@ -7,7 +7,11 @@ import {
 	signOut,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../firebase/FirebaseConfig";
+
+import { collection, addDoc } from "firebase/firestore";
+
+import { auth, db } from "../firebase/FirebaseConfig";
+import { toast } from "react-toastify";
 
 interface ContextType {
 	user: User | null;
@@ -19,10 +23,13 @@ interface ContextType {
 	logout: () => void;
 	handleRegister: (
 		e: FormEvent<HTMLFormElement>,
-		name: string,
+
 		email: string,
-		password: string
+		password: string,
+		name: string
 	) => void;
+	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
+
 	isChecked: boolean;
 }
 
@@ -37,6 +44,7 @@ const defaultValue: ContextType = {
 	handleRegister: () => {
 		throw Error("No provider");
 	},
+
 	isChecked: false,
 };
 
@@ -55,6 +63,7 @@ export const AuthContextProvider = (props: Props) => {
 		signOut(auth)
 			.then(() => {
 				setUser(null);
+				toast.info("logged out");
 			})
 			.catch((error) => {
 				// An error happened.
@@ -64,9 +73,11 @@ export const AuthContextProvider = (props: Props) => {
 
 	const handleRegister = (
 		e: FormEvent<HTMLFormElement>,
-		name: string,
 		email: string,
-		password: string
+
+		password: string,
+		name: string
+
 	) => {
 		e.preventDefault();
 		createUserWithEmailAndPassword(auth, email, password)
@@ -75,9 +86,23 @@ export const AuthContextProvider = (props: Props) => {
 				const user = userCredential.user;
 				setUser(user);
 				console.log("new user", user);
-				alert("success, you are registered");
 
-				navigate("/");
+				const uid = user.uid;
+				addDoc(collection(db, "users"), {
+					email: user.email,
+					uid: uid,
+
+					name,
+				});
+
+				// const updateUser = doc(db, "users", "id");
+
+				// updateDoc(updateUser, {
+				// 	name,
+				// });
+
+				toast.success("Success, you are registered");
+
 			})
 			.catch((error) => {
 				// const errorCode = error.code;
@@ -86,20 +111,35 @@ export const AuthContextProvider = (props: Props) => {
 			});
 	};
 
+
+	// async function handleUpdate() {
+	// 	try {
+	// 		const updateUser = doc(db, "users", "id");
+
+	// 		await updateDoc(updateUser, {
+	// 			name: "",
+	// 		});
+	// 		toast.success("Success, you have a name");
+	// 		navigate("/");
+	// 	} catch (e) {
+	// 		console.error("Error adding document: ", e);
+	// 	}
+	// }
+
+
 	const handleLogin = (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
 		password: string
 	) => {
 		e.preventDefault();
-		console.log("wearehere");
 		signInWithEmailAndPassword(auth, email, password)
 			.then((userCredential) => {
 				// Signed in
 				const user = userCredential.user;
 				setUser(user);
 				console.log(user);
-				alert("signed in successfully");
+				toast.success("Success, you are logged in");
 				navigate("/");
 				// ...
 			})
@@ -109,7 +149,6 @@ export const AuthContextProvider = (props: Props) => {
 				console.log(error);
 			});
 	};
-	console.log("testing");
 
 	const checkActiveUser = () => {
 		onAuthStateChanged(auth, (user) => {
@@ -135,7 +174,9 @@ export const AuthContextProvider = (props: Props) => {
 
 	return (
 		<AuthContext.Provider
+
 			value={{ user, handleLogin, logout, handleRegister, isChecked }}>
+
 			{props.children}
 		</AuthContext.Provider>
 	);

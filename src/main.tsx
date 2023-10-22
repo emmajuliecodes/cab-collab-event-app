@@ -3,7 +3,8 @@ import ReactDOM from "react-dom/client";
 
 import "./index.css";
 import "./App.css";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
 import { AuthContextProvider } from "./context/AuthContext.tsx";
@@ -15,9 +16,11 @@ import EventsListView from "./views/EventsListView.tsx";
 import UserProfile from "./views/Profile.tsx";
 import WithNav from "./components/Layouts/WithNav.tsx";
 import EventDetailView from "./views/EventDetailView.tsx";
-import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
+// import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
 import Register from "./views/Register.tsx";
 import EventModal from "./components/EventModal.tsx";
+
+import FilterPublic from "./views/Testing.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -34,7 +37,9 @@ const router = createBrowserRouter([
 						<WithNav>
 							<Outlet />
 						</WithNav>
-						<WithFooter />x
+
+						{/* <WithFooter /> */}
+
 					</>
 				),
 				children: [
@@ -59,10 +64,20 @@ const router = createBrowserRouter([
 						path: "/about",
 						element: <FilterByCity />,
 					},
+
+
+					{
+						path: "/testing",
+						element: <FilterPublic />,
+					},
+
+
 					{
 						path: "/profile",
 						element: <UserProfile />,
 					},
+
+
 					{
 						path: "/register",
 						element: <Register />,
@@ -85,5 +100,6 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<RouterProvider router={router} />
+		<ToastContainer />
 	</React.StrictMode>
 );

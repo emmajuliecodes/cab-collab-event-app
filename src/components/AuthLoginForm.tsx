@@ -9,7 +9,7 @@ type Props = {
 	) => void;
 };
 
-const AuthForm = ({ title, handleSubmit }: Props) => {
+const AuthLoginForm = ({ title, handleSubmit }: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -20,6 +20,7 @@ const AuthForm = ({ title, handleSubmit }: Props) => {
 			<form onSubmit={(e) => handleSubmit(e, email, password)}>
 				<label htmlFor="email">Email</label>
 				<input
+					placeholder="add your email"
 					id="email"
 					type="email"
 					value={email}
@@ -27,6 +28,7 @@ const AuthForm = ({ title, handleSubmit }: Props) => {
 				/>
 				<label htmlFor="password">Password</label>
 				<input
+					placeholder="add your password"
 					id="password"
 					type="password"
 					value={password}
@@ -38,4 +40,4 @@ const AuthForm = ({ title, handleSubmit }: Props) => {
 	);
 };
 
-export default AuthForm;
+export default AuthLoginForm;
