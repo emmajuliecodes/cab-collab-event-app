@@ -153,7 +153,7 @@ const EventModal: React.FC = () => {
             renderOption={(props, option, { selected }) => (
               <li {...props}>
                 <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                {option.name}
+                {option.email}
               </li>
             )}
             style={{ width: 500 }}
