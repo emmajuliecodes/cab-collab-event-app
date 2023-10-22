@@ -7,12 +7,9 @@ import {
 	signOut,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import {
-	collection,
-	addDoc,
-	// updateDoc,
-	// doc,
-} from "firebase/firestore";
+
+import { collection, addDoc } from "firebase/firestore";
+
 import { auth, db } from "../firebase/FirebaseConfig";
 import { toast } from "react-toastify";
 
@@ -28,8 +25,11 @@ interface ContextType {
 		e: FormEvent<HTMLFormElement>,
 
 		email: string,
-		password: string
+		password: string,
+		name: string
 	) => void;
+	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
+
 	isChecked: boolean;
 }
 
@@ -44,6 +44,7 @@ const defaultValue: ContextType = {
 	handleRegister: () => {
 		throw Error("No provider");
 	},
+
 	isChecked: false,
 };
 
@@ -73,7 +74,10 @@ export const AuthContextProvider = (props: Props) => {
 	const handleRegister = (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
-		password: string
+
+		password: string,
+		name: string
+
 	) => {
 		e.preventDefault();
 		createUserWithEmailAndPassword(auth, email, password)
@@ -83,15 +87,22 @@ export const AuthContextProvider = (props: Props) => {
 				setUser(user);
 				console.log("new user", user);
 
-				toast.success("Success, you are registered");
 				const uid = user.uid;
 				addDoc(collection(db, "users"), {
 					email: user.email,
 					uid: uid,
-					name: "",
+
+					name,
 				});
 
-				navigate("/");
+				// const updateUser = doc(db, "users", "id");
+
+				// updateDoc(updateUser, {
+				// 	name,
+				// });
+
+				toast.success("Success, you are registered");
+
 			})
 			.catch((error) => {
 				// const errorCode = error.code;
@@ -99,6 +110,22 @@ export const AuthContextProvider = (props: Props) => {
 				console.log(error);
 			});
 	};
+
+
+	// async function handleUpdate() {
+	// 	try {
+	// 		const updateUser = doc(db, "users", "id");
+
+	// 		await updateDoc(updateUser, {
+	// 			name: "",
+	// 		});
+	// 		toast.success("Success, you have a name");
+	// 		navigate("/");
+	// 	} catch (e) {
+	// 		console.error("Error adding document: ", e);
+	// 	}
+	// }
+
 
 	const handleLogin = (
 		e: FormEvent<HTMLFormElement>,
@@ -147,7 +174,9 @@ export const AuthContextProvider = (props: Props) => {
 
 	return (
 		<AuthContext.Provider
+
 			value={{ user, handleLogin, logout, handleRegister, isChecked }}>
+
 			{props.children}
 		</AuthContext.Provider>
 	);

@@ -1,4 +1,8 @@
+
+// import { useState, type FormEvent } from "react";
+
 // // import { collection } from "firebase/firestore";
+
 
 // type Props = {
 // 	title: string;
@@ -6,26 +10,15 @@
 // };
 
 // const UpdateProfileForm = ({ title, handleSubmit }: Props) => {
-// 	const [userDataToUpdate, setUserDataToUpdate] = useState({
-// 	});
-// 	const [documentId] = useState("");
 
-// 	const updateDocument = async () => {
-// 		try {
-// 			const docRef = firestore.collection("Users").doc(documentId);
-// 			await docRef.update({
-// 				name: userDataToUpdate,
-// 			});
-// 			console.log("updated!");
-// 		} catch (error) {
-// 			console.log(error, "error!");
-// 		}
-// 	}
+// 	const [name, setName] = useState("");
 
 // 	return (
 // 		<div>
 // 			<h1>{title}</h1>
-// 			<form onSubmit={(e) => handleSubmit(e, )}>
+
+// 			<form onSubmit={(e) => handleSubmit(e, name)}>
+
 // 				<label htmlFor="name">Name</label>
 // 				<input
 // 					id="name"

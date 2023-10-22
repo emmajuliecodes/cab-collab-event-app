@@ -37,7 +37,9 @@ const router = createBrowserRouter([
 						<WithNav>
 							<Outlet />
 						</WithNav>
+
 						{/* <WithFooter /> */}
+
 					</>
 				),
 				children: [
@@ -63,15 +65,19 @@ const router = createBrowserRouter([
 						element: <FilterByCity />,
 					},
 
+
 					{
 						path: "/testing",
 						element: <FilterPublic />,
 					},
 
+
 					{
 						path: "/profile",
 						element: <UserProfile />,
 					},
+
+
 					{
 						path: "/register",
 						element: <Register />,
