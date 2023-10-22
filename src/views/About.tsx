@@ -1,24 +1,30 @@
 import { db } from "../firebase/FirebaseConfig";
-import {
-	// DocumentData,
-	// Query,
-	collection,
-	getDocs,
-	query,
-	where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { Event } from "../@types";
 
 import { useCallback, useEffect, useState } from "react";
 
-function FilterByCity() {
+function VisitorEventView() {
 	const [cityArray, setCityArray] = useState<(Event & { id: string })[]>([]);
 	const [inputValue, setInputValue] = useState("");
 
 	const fetchByCity = useCallback(async () => {
-		const q = query(collection(db, "events"), where("city", "==", inputValue));
+		const publicAndCityEventQuery = query(
+			collection(db, "events"),
+			where("eventType", "==", "public"),
+			where("city", "==", inputValue)
+		);
+
+		const publicEventQuery = query(
+			collection(db, "events"),
+			where("eventType", "==", "public")
+		);
+
 		console.log(inputValue, "inputvalue");
-		const querySnapshot = await getDocs(q);
+		const querySnapshot = await getDocs(
+			inputValue.length == 0 ? publicEventQuery : publicAndCityEventQuery
+		);
+
 		console.log("querySnapshot", querySnapshot);
 		const foundArray: (Event & { id: string })[] = querySnapshot.docs.map(
 			(doc) => {
@@ -41,7 +47,7 @@ function FilterByCity() {
 
 	return (
 		<>
-			<h1>Testing City Filters</h1>
+			<h1>Events</h1>
 
 			<div className="search-bar">
 				<input
@@ -64,6 +70,7 @@ function FilterByCity() {
 						<>
 							<p>Name: {e.eventName}</p>
 							<p>City: {e.city}</p>
+							<p>Type: {e.eventType}</p>
 						</>
 					);
 				})
@@ -72,4 +79,4 @@ function FilterByCity() {
 	);
 }
 
-export default FilterByCity;
+export default VisitorEventView;
