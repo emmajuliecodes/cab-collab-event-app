@@ -72,16 +72,16 @@ const EventModal: React.FC = () => {
     const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
     startEndLogic(startTime, endTime);
 
-    if (!imageFile) {
-      setFormError(`Please provide an image`);
+    let imageUrl = "";
+    if (imageFile) {
+      // Only attempt to upload if there's an image file
+      setUploading(true);
+      imageUrl = (await uploadImageAndGetURL()) || "";
       setUploading(false);
-      return;
     }
 
     try {
-      setUploading(true);
-      const imageUrl = await uploadImageAndGetURL();
-      const newEvent = { ...formData, image: imageUrl || "" };
+      const newEvent = { ...formData, image: imageUrl };
       const docRef = await addDoc(collection(db, "events"), newEvent);
 
       // Update each selected user's 'pendingInvites' with the new event's ID.
@@ -114,8 +114,6 @@ const EventModal: React.FC = () => {
     } catch (error) {
       console.error("Error: ", error);
       setFormError("Error submitting form. Try again later.");
-    } finally {
-      setUploading(false);
     }
   };
 
