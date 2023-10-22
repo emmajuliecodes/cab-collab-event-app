@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { db } from "../firebase/FirebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { FirebaseUser, UsersContext } from "../context/UsersContext";
 import {} from "firebase/database";
@@ -66,11 +66,12 @@ const EventModal: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     const startTime = new Date(`1970-01-01T${formData.startTime}Z`);
     const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
-    e.preventDefault();
-    setUploading(true);
     startEndLogic(startTime, endTime);
+
     if (!imageFile) {
       setFormError(`Please provide an image`);
       setUploading(false);
@@ -78,9 +79,21 @@ const EventModal: React.FC = () => {
     }
 
     try {
+      setUploading(true);
       const imageUrl = await uploadImageAndGetURL();
       const newEvent = { ...formData, image: imageUrl || "" };
       const docRef = await addDoc(collection(db, "events"), newEvent);
+
+      // Update each selected user's 'pendingInvites' with the new event's ID.
+      for (const user of selectedUsers) {
+        const userDoc = doc(db, "users", user.id);
+        const userSnapshot = await getDoc(userDoc);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data() as FirebaseUser;
+          const updatedPendingInvites = [...userData.pendingInvites, docRef.id];
+          await updateDoc(userDoc, { pendingInvites: updatedPendingInvites });
+        }
+      }
 
       console.log("Document written with ID: ", docRef.id);
 
@@ -130,14 +143,14 @@ const EventModal: React.FC = () => {
         <div>
           <Autocomplete
             multiple
-            id="checkboxes-tags-demo"
+            id="invitees-emails"
             options={users || []}
             value={selectedUsers}
             onChange={(e, newValue) => {
               setSelectedUsers(newValue);
             }}
             disableCloseOnSelect
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option.email}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
                 <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
@@ -145,7 +158,7 @@ const EventModal: React.FC = () => {
               </li>
             )}
             style={{ width: 500 }}
-            renderInput={(params) => <TextField {...params} label="Checkboxes" placeholder="Favorites" />}
+            renderInput={(params) => <TextField {...params} label="Invitees" placeholder="Search by email" />}
           />
           {/* <label htmlFor="invitees">Invitees:</label>
           <input type="text" id="invitees" name="invitees" value={formData.invitees} onChange={handleChange} /> */}

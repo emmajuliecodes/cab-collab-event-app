@@ -1,9 +1,21 @@
+import React, { createContext, useState } from "react";
 import { User } from "firebase/auth";
-import { createContext, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, QueryDocumentSnapshot } from "firebase/firestore";
 import { db } from "../firebase/FirebaseConfig";
 
+interface FirestoreUserData {
+  name?: string;
+  phone?: string;
+  email?: string;
+  city?: string;
+  attending?: string[];
+  declined?: string[];
+  invites?: string[];
+  uid?: string;
+  pendingInvites: string[];
+}
 export interface FirebaseUser {
+  pendingInvites: string[];
   id: string;
   name: string;
   phone: string;
@@ -43,35 +55,41 @@ interface Props {
   children: React.ReactNode;
 }
 
-export const UsersContextProvider = (props: Props) => {
+export const UsersContextProvider: React.FC<Props> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<FirebaseUser[] | undefined>(undefined);
 
-  const getAllUsers = async () => {
-    const userRef = collection(db, "users"); // "users" is the name of the collection
-    const userSnapshot = await getDocs(userRef);
-    const usersFirebase: FirebaseUser[] = userSnapshot.docs.map((doc) => {
-      const data = doc.data();
+  const transformToFirebaseUser = (doc: QueryDocumentSnapshot): FirebaseUser => {
+    const data = doc.data() as FirestoreUserData; // Cast the data to your custom type
+    return {
+      id: doc.id,
+      name: data.name || "",
+      phone: data.phone || "",
+      email: data.email || "",
+      city: data.city || "",
+      attending: data.attending || [],
+      declined: data.declined || [],
+      invites: data.invites || [],
+      uid: data.uid || "",
+      pendingInvites: data.pendingInvites || [],
+    };
+  };
 
-      return {
-        id: doc.id,
-        name: data.name || "",
-        phone: data.phone || "",
-        email: data.email || "",
-        city: data.city || "",
-        attending: data.attending || [],
-        declined: data.declined || [],
-        invites: data.invites || [],
-        uid: data.uid || "",
-      };
-    });
+  const getAllUsers = async () => {
+    const userRef = collection(db, "users");
+    const userSnapshot = await getDocs(userRef);
+    const usersFirebase = userSnapshot.docs.map(transformToFirebaseUser);
     console.log(usersFirebase);
     setUsers(usersFirebase);
   };
 
-  const handleAddUserToEvent = () => {};
+  const handleAddUserToEvent = () => {
+    // Implementation here
+  };
 
-  const handleRemoveUserFromEvent = () => {};
+  const handleRemoveUserFromEvent = () => {
+    // Implementation here
+  };
 
-  return <UsersContext.Provider value={{ user, getAllUsers, users, handleAddUserToEvent, handleRemoveUserFromEvent }}>{props.children}</UsersContext.Provider>;
+  return <UsersContext.Provider value={{ user, getAllUsers, users, handleAddUserToEvent, handleRemoveUserFromEvent }}>{children}</UsersContext.Provider>;
 };
