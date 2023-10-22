@@ -90,7 +90,8 @@ const EventModal: React.FC = () => {
         const userSnapshot = await getDoc(userDoc);
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data() as FirebaseUser;
-          const updatedPendingInvites = [...userData.pendingInvites, docRef.id];
+          const currentPendingInvites = userData.pendingInvites || []; // Default to an empty array if undefined
+          const updatedPendingInvites = [...currentPendingInvites, docRef.id];
           await updateDoc(userDoc, { pendingInvites: updatedPendingInvites });
         }
       }
