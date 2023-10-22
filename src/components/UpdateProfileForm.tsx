@@ -1,4 +1,8 @@
+
 // import { useState, type FormEvent } from "react";
+
+// // import { collection } from "firebase/firestore";
+
 
 // type Props = {
 // 	title: string;
@@ -6,12 +10,15 @@
 // };
 
 // const UpdateProfileForm = ({ title, handleSubmit }: Props) => {
+
 // 	const [name, setName] = useState("");
 
 // 	return (
 // 		<div>
 // 			<h1>{title}</h1>
+
 // 			<form onSubmit={(e) => handleSubmit(e, name)}>
+
 // 				<label htmlFor="name">Name</label>
 // 				<input
 // 					id="name"

@@ -7,7 +7,9 @@ import {
 	signOut,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
+
 import { collection, addDoc } from "firebase/firestore";
+
 import { auth, db } from "../firebase/FirebaseConfig";
 import { toast } from "react-toastify";
 
@@ -21,11 +23,13 @@ interface ContextType {
 	logout: () => void;
 	handleRegister: (
 		e: FormEvent<HTMLFormElement>,
+
 		email: string,
 		password: string,
 		name: string
 	) => void;
 	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
+
 	isChecked: boolean;
 }
 
@@ -70,8 +74,10 @@ export const AuthContextProvider = (props: Props) => {
 	const handleRegister = (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
+
 		password: string,
 		name: string
+
 	) => {
 		e.preventDefault();
 		createUserWithEmailAndPassword(auth, email, password)
@@ -85,6 +91,7 @@ export const AuthContextProvider = (props: Props) => {
 				addDoc(collection(db, "users"), {
 					email: user.email,
 					uid: uid,
+
 					name,
 				});
 
@@ -95,6 +102,7 @@ export const AuthContextProvider = (props: Props) => {
 				// });
 
 				toast.success("Success, you are registered");
+
 			})
 			.catch((error) => {
 				// const errorCode = error.code;
@@ -102,6 +110,7 @@ export const AuthContextProvider = (props: Props) => {
 				console.log(error);
 			});
 	};
+
 
 	// async function handleUpdate() {
 	// 	try {
@@ -116,6 +125,7 @@ export const AuthContextProvider = (props: Props) => {
 	// 		console.error("Error adding document: ", e);
 	// 	}
 	// }
+
 
 	const handleLogin = (
 		e: FormEvent<HTMLFormElement>,
@@ -164,14 +174,9 @@ export const AuthContextProvider = (props: Props) => {
 
 	return (
 		<AuthContext.Provider
-			value={{
-				user,
-				handleLogin,
-				logout,
-				handleRegister,
 
-				isChecked,
-			}}>
+			value={{ user, handleLogin, logout, handleRegister, isChecked }}>
+
 			{props.children}
 		</AuthContext.Provider>
 	);
