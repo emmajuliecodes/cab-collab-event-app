@@ -21,11 +21,13 @@ export interface Event {
 	declined: Array[];
 	pending: Array[];
 	city: string;
-	description: Array[];
+	description: string;
 	eventName: string;
 	host: string | User;
-	map_location: Location;
-	street_address: Location;
+	// Location: is a type only used for window.location
+	// https://developer.mozilla.org/en-US/docs/Web/API/Location
+	// map_location: Location;
+	street_address: string;
 	image: string;
 	public: boolean;
 	creator_id: string;
