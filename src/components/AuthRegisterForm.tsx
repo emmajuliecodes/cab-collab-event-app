@@ -5,18 +5,20 @@ type Props = {
 	handleSubmit: (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
-		password: string
+		password: string,
+		name: string
 	) => void;
 };
 
 const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [name, setName] = useState("");
 
 	return (
 		<div>
 			<h1>{title}</h1>
-			<form onSubmit={(e) => handleSubmit(e, email, password)}>
+			<form onSubmit={(e) => handleSubmit(e, email, password, name)}>
 				<label htmlFor="email">Email </label>
 				<input
 					placeholder="add your email"
@@ -33,6 +35,14 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 					type="password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
+				/>
+				<label htmlFor="name">Name</label>
+				<input
+					placeholder="add your n"
+					id="name"
+					type="name"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
 				/>
 				<br></br>
 

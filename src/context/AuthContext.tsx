@@ -7,7 +7,7 @@ import {
 	signOut,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/FirebaseConfig";
 import { toast } from "react-toastify";
 
@@ -22,7 +22,8 @@ interface ContextType {
 	handleRegister: (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
-		password: string
+		password: string,
+		name: string
 	) => void;
 	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
 	isChecked: boolean;
@@ -69,8 +70,8 @@ export const AuthContextProvider = (props: Props) => {
 	const handleRegister = (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
-		password: string
-		// name: string
+		password: string,
+		name: string
 	) => {
 		e.preventDefault();
 		createUserWithEmailAndPassword(auth, email, password)
@@ -84,14 +85,14 @@ export const AuthContextProvider = (props: Props) => {
 				addDoc(collection(db, "users"), {
 					email: user.email,
 					uid: uid,
-					name: "",
+					name,
 				});
 
-				const updateUser = doc(db, "users", "id");
+				// const updateUser = doc(db, "users", "id");
 
-				updateDoc(updateUser, {
-					name: "",
-				});
+				// updateDoc(updateUser, {
+				// 	name,
+				// });
 
 				toast.success("Success, you are registered");
 			})
