@@ -16,7 +16,7 @@ import EventsListView from "./views/EventsListView.tsx";
 import UserProfile from "./views/Profile.tsx";
 import WithNav from "./components/Layouts/WithNav.tsx";
 import EventDetailView from "./views/EventDetailView.tsx";
-// import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
+
 import Register from "./views/Register.tsx";
 import { UsersContextProvider } from "./context/UsersContext.tsx";
 import EventForm from "./components/EventForm.tsx";
@@ -38,7 +38,6 @@ const router = createBrowserRouter([
 						<WithNav>
 							<Outlet />
 						</WithNav>
-						{/* <WithFooter /> */}
 					</>
 				),
 				children: [
