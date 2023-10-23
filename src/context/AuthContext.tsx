@@ -9,13 +9,6 @@ import {
 } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/FirebaseConfig";
-// import {
-// 	getStorage,
-// 	ref,
-// 	uploadBytesResumable,
-// 	getDownloadURL,
-// } from "firebase/storage";
-
 import { toast } from "react-toastify";
 
 interface ContextType {
@@ -91,9 +84,6 @@ export const AuthContextProvider = (props: Props) => {
 				console.log("new user", user);
 
 				const uid = user.uid;
-
-				// const storage = getStorage();
-				// const avatarRef = ref(storage, "images/" + imageFile.name);
 
 				addDoc(collection(db, "users"), {
 					email: user.email,
