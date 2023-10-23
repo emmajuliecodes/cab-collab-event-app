@@ -10,7 +10,9 @@ function App() {
 	const redirect = useNavigate();
 	return (
 		<>
+
 			<br></br>
+
 			<h1>EventSpace</h1>
 			<h2>Much better than Facebook events...</h2>
 			<br></br>

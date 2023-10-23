@@ -13,18 +13,19 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const EventModal: React.FC = () => {
-  const [formData, setFormData] = useState({
-    date: "",
-    startTime: "",
-    endTime: "",
-    invitees: "",
-    location: "",
-    description: "",
-    eventName: "",
-    host: "",
-    image: "",
-    eventType: "public",
-  });
+	const [formData, setFormData] = useState({
+		date: "",
+		startTime: "",
+		endTime: "",
+		invitees: "",
+		location: "",
+		description: "",
+		eventName: "",
+		host: "",
+		image: "",
+		eventType: "public",
+	});
+
 
   const { getAllUsers, users } = useContext(UsersContext);
   const [selectedUsers, setSelectedUsers] = useState<FirebaseUser[]>([]);
@@ -32,31 +33,39 @@ const EventModal: React.FC = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setFormError(null);
-  };
+
+	const handleChange = (
+		e: React.ChangeEvent<
+			HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+		>
+	) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({ ...prev, [name]: value }));
+		setFormError(null);
+	};
+
 
   const uploadImageAndGetURL = async () => {
     if (!imageFile) return null;
 
-    const storage = getStorage();
-    const storageRef = ref(storage, "images/" + imageFile.name);
-    const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-    return new Promise<string | null>((resolve, reject) => {
-      uploadTask.on(
-        "state_changed",
-        () => {},
-        (error) => reject(error),
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadURL);
-        }
-      );
-    });
-  };
+		const storage = getStorage();
+		const storageRef = ref(storage, "images/" + imageFile.name);
+		const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+		return new Promise<string | null>((resolve, reject) => {
+			uploadTask.on(
+				"state_changed",
+				() => {},
+				(error) => reject(error),
+				async () => {
+					const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+					resolve(downloadURL);
+				}
+			);
+		});
+	};
+
 
   const startEndLogic = (startingTime: Date, endingTime: Date): void => {
     if (startingTime >= endingTime) {
@@ -205,6 +214,7 @@ const EventModal: React.FC = () => {
       {uploading && <p>Uploading Image...</p>}
     </div>
   );
+
 };
 
 export default EventModal;
