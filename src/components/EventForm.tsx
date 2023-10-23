@@ -74,14 +74,19 @@ const EventForm: React.FC = () => {
 
     let imageUrl = "";
     if (imageFile) {
-      // Only attempt to upload if there's an image file
       setUploading(true);
       imageUrl = (await uploadImageAndGetURL()) || "";
       setUploading(false);
     }
 
+    const inviteeIds = selectedUsers.map((user) => user.id);
+
     try {
-      const newEvent = { ...formData, image: imageUrl };
+      const newEvent = {
+        ...formData,
+        invitees: inviteeIds, // Set the invitees field with the IDs
+        image: imageUrl,
+      };
       const docRef = await addDoc(collection(db, "events"), newEvent);
 
       // Update each selected user's 'pendingInvites' with the new event's ID.
@@ -150,6 +155,7 @@ const EventForm: React.FC = () => {
             }}
             disableCloseOnSelect
             getOptionLabel={(option) => option.email}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
                 <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
