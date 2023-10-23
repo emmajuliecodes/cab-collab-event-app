@@ -1,192 +1,152 @@
 import { createContext, useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-	type User,
-	createUserWithEmailAndPassword,
-	onAuthStateChanged,
-	signOut,
-	signInWithEmailAndPassword,
-} from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
+import { type User, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/FirebaseConfig";
-// import {
-// 	getStorage,
-// 	ref,
-// 	uploadBytesResumable,
-// 	getDownloadURL,
-// } from "firebase/storage";
-
 import { toast } from "react-toastify";
 
 interface ContextType {
-	user: User | null;
-	handleLogin: (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string
-	) => void;
-	logout: () => void;
-	handleRegister: (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string,
-		name: string,
-		avatar: string
-	) => void;
-	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
-	isChecked: boolean;
+  user: User | null;
+  handleLogin: (e: FormEvent<HTMLFormElement>, email: string, password: string) => void;
+  logout: () => void;
+  handleRegister: (e: FormEvent<HTMLFormElement>, email: string, password: string, name: string, avatar: string) => void;
+  // handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
+  isChecked: boolean;
 }
 
 const defaultValue: ContextType = {
-	user: null,
-	handleLogin: () => {
-		throw Error("No provider");
-	},
-	logout: () => {
-		throw Error("No provider");
-	},
-	handleRegister: () => {
-		throw Error("No provider");
-	},
+  user: null,
+  handleLogin: () => {
+    throw Error("No provider");
+  },
+  logout: () => {
+    throw Error("No provider");
+  },
+  handleRegister: () => {
+    throw Error("No provider");
+  },
 
-	isChecked: false,
+  isChecked: false,
 };
 
 export const AuthContext = createContext(defaultValue);
 
 interface Props {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export const AuthContextProvider = (props: Props) => {
-	const [user, setUser] = useState<User | null>(null);
-	const [isChecked, setIsChecked] = useState(false);
-	const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [isChecked, setIsChecked] = useState(false);
+  const navigate = useNavigate();
 
-	const logout = () => {
-		signOut(auth)
-			.then(() => {
-				setUser(null);
-				toast.info("logged out");
-			})
-			.catch((error) => {
-				// An error happened.
-				console.log(error);
-			});
-	};
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+        toast.info("logged out");
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error);
+      });
+  };
 
-	const handleRegister = (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string,
-		name: string,
-		avatar: string
-	) => {
-		e.preventDefault();
-		createUserWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				setUser(user);
-				console.log("new user", user);
+  const handleRegister = (e: FormEvent<HTMLFormElement>, email: string, password: string, name: string, avatar: string) => {
+    e.preventDefault();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUser(user);
+        console.log("new user", user);
 
-				const uid = user.uid;
+        const uid = user.uid;
 
-				// const storage = getStorage();
-				// const avatarRef = ref(storage, "images/" + imageFile.name);
+        // const storage = getStorage();
+        // const avatarRef = ref(storage, "images/" + imageFile.name);
 
-				addDoc(collection(db, "users"), {
-					email: user.email,
-					uid: uid,
-					name,
-					avatar,
-				});
+        addDoc(collection(db, "users"), {
+          email: user.email,
+          uid: uid,
+          name,
+          avatar: avatar || "default-avatar-url",
+        });
 
-				// const updateUser = doc(db, "users", "id");
+        // const updateUser = doc(db, "users", "id");
 
-				// updateDoc(updateUser, {
-				// 	name,
-				// });
+        // updateDoc(updateUser, {
+        // 	name,
+        // });
 
-				toast.success("Success, you are registered");
-			})
-			.catch((error) => {
-				// const errorCode = error.code;
-				// const errorMessage = error.message;
-				console.log(error);
-			});
-	};
+        toast.success("Success, you are registered");
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(error);
+      });
+  };
 
-	// async function handleUpdate() {
-	// 	try {
-	// 		const updateUser = doc(db, "users", "id");
+  const handleLogin = (e: FormEvent<HTMLFormElement>, email: string, password: string) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUser(user);
+        console.log(user);
+        toast.success("Success, you are logged in");
+        navigate("/");
+        // ...
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(error);
+      });
+  };
 
-	// 		await updateDoc(updateUser, {
-	// 			name: "",
-	// 		});
-	// 		toast.success("Success, you have a name");
-	// 		navigate("/");
-	// 	} catch (e) {
-	// 		console.error("Error adding document: ", e);
-	// 	}
-	// }
+  const checkActiveUser = () => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is signed in
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          // Here, you can merge the auth user data and Firestore user data
+          // and set it to your state/context.
+          const fullUserData = {
+            ...user,
+            ...userDoc.data(),
+          };
+          setUser(fullUserData);
+        } else {
+          setUser(user);
+        }
+      } else {
+        setUser(null);
+      }
+      setIsChecked(true);
+    });
+  };
 
-	const handleLogin = (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string
-	) => {
-		e.preventDefault();
-		signInWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				setUser(user);
-				console.log(user);
-				toast.success("Success, you are logged in");
-				navigate("/");
-				// ...
-			})
-			.catch((error) => {
-				// const errorCode = error.code;
-				// const errorMessage = error.message;
-				console.log(error);
-			});
-	};
+  useEffect(() => {
+    checkActiveUser();
+  }, []);
 
-	const checkActiveUser = () => {
-		onAuthStateChanged(auth, (user) => {
-			if (user) {
-				// User is signed in, see docs for a list of available properties
-				// https://firebase.google.com/docs/reference/js/auth.user
-				// const uid = user.uid;
-				setUser(user);
-				console.log(user, "user");
-				// ...
-			} else {
-				setUser(null);
-				// User is signed out
-				// ...
-			}
-			setIsChecked(true);
-		});
-	};
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        handleLogin,
+        logout,
+        handleRegister,
 
-	useEffect(() => {
-		checkActiveUser();
-	}, []);
-
-	return (
-		<AuthContext.Provider
-			value={{
-				user,
-				handleLogin,
-				logout,
-				handleRegister,
-
-				isChecked,
-			}}>
-			{props.children}
-		</AuthContext.Provider>
-	);
+        isChecked,
+      }}
+    >
+      {props.children}
+    </AuthContext.Provider>
+  );
 };
