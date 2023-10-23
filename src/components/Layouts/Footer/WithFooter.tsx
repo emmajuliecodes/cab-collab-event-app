@@ -1,9 +1,9 @@
-import Footer from "./Footer";
+import StickyFooter from "./Footer";
 
 const WithFooter = () => {
 	return (
 		<>
-			<Footer />
+			<StickyFooter />
 		</>
 	);
 };

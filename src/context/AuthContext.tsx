@@ -107,6 +107,18 @@ export const AuthContextProvider = (props: Props) => {
 			});
 	};
 
+	// const AddImageToFirestore = () => {
+	// 	const firebaseApp = useFirebaseApp();
+	// 	const user = useUser();
+	// 	const [image, setImage] = useState<File | null>(null);
+
+	// 	const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+	// 		if (event.target.files && event.target.files[0]) {
+	// 			setImage(event.target.files[0]);
+	// 		}
+	// 	};
+	// }
+
 	// async function handleUpdate() {
 	// 	try {
 	// 		const updateUser = doc(db, "users", "id");
