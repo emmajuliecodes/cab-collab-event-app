@@ -75,7 +75,7 @@ const router = createBrowserRouter([
             path: "/listevent",
             element: (
               <UsersContextProvider>
-                <EventForm />,
+                <EventForm />
               </UsersContextProvider>
             ),
           },

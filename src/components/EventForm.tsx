@@ -121,7 +121,7 @@ const EventForm: React.FC = () => {
   useEffect(() => {
     getAllUsers();
     console.log("selected", selectedUsers);
-  }, [getAllUsers, selectedUsers]);
+  }, [selectedUsers]);
 
   return (
     <div className="modal">
