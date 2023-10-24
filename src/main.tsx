@@ -1,14 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import './index.css';
-import './App.css';
-import {ToastContainer} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {createBrowserRouter, RouterProvider, Outlet} from 'react-router-dom';
-
-
+import "./index.css";
+import "./App.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { AuthContextProvider } from "./context/AuthContext.tsx";
+import { LightDarkModeProvider } from "./context/LightDarkModeContext.tsx";
 import Error404 from "./views/Error404.tsx";
 import Home from "./views/Home.tsx";
 import FilterByCity from "./views/About.tsx";
@@ -19,7 +18,7 @@ import WithNav from "./components/Layouts/WithNav.tsx";
 import EventDetailView from "./views/EventDetailView.tsx";
 
 import Register from "./views/Register.tsx";
-import { UsersContextProvider } from "./context/UsersContext.tsx";
+
 import EventForm from "./components/EventForm.tsx";
 
 import TestingPage from "./views/Testing.tsx";
@@ -28,7 +27,9 @@ const router = createBrowserRouter([
 	{
 		element: (
 			<AuthContextProvider>
-				<Outlet />
+				<LightDarkModeProvider>
+					<Outlet />
+				</LightDarkModeProvider>
 			</AuthContextProvider>
 		),
 		// // putting context at outermost layer of router means it still wraps every route, but is also inside the router and can then use react router dom hooks like useNavigate
@@ -78,27 +79,22 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "/listevent",
-						element: (
-							<UsersContextProvider>
-								<EventForm />
-							</UsersContextProvider>
-						),
+						element: <EventForm />,
 					},
 				],
 			},
 
-
-      {
-        path: '*',
-        element: <Error404 />,
-      },
-    ],
-  },
+			{
+				path: "*",
+				element: <Error404 />,
+			},
+		],
+	},
 ]);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-    <ToastContainer />
-  </React.StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+	<React.StrictMode>
+		<RouterProvider router={router} />
+		<ToastContainer />
+	</React.StrictMode>
 );

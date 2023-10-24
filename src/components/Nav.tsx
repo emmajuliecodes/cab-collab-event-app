@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState, CSSProperties } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { useLightDarkMode } from "../context/LightDarkModeContext";
 // import Toastify from "toastify-js";
 
 function Nav() {
 	const { user, logout } = useContext(AuthContext);
 	const redirect = useNavigate();
+	const { isDarkMode, toggleMode } = useLightDarkMode();
 
 	// const [scrollNav, setScrollNav] = useState(false);
 	// const [isMouseMoving, setIsMouseMoving] = useState(false);
@@ -42,7 +44,7 @@ function Nav() {
 	};
 
 	const activeLink: React.CSSProperties = {
-		color: "darkcyan",
+		color: "blueviolet",
 		fontWeight: "bolder",
 	};
 
@@ -137,6 +139,9 @@ function Nav() {
 					<button onClick={() => redirect("/register")}>Create event</button>
 				)}
 			</p>
+			<div className={isDarkMode ? "dark" : "light"}>
+				<button onClick={toggleMode}>Toggle Mode</button>
+			</div>
 		</nav>
 	);
 }
