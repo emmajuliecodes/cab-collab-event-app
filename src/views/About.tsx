@@ -1,48 +1,56 @@
-import {db} from '../firebase/FirebaseConfig';
-import {
-  DocumentData,
-  Query,
-  collection,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
-import {Event} from '../@types';
 
-import {useEffect, useState} from 'react';
+=======
+import { db } from "../firebase/FirebaseConfig";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { Event } from "../@types";
 
-function FilterByCity() {
-  const [cityArray, setCityArray] = useState<(Event & {id: string})[]>([]);
-  const [inputValue, setInputValue] = useState('');
+import { useCallback, useEffect, useState } from "react";
 
-  useEffect(() => {
-    const q = query(collection(db, 'events'));
-    fetchByCity(q).catch((e) => console.log(e));
-  }, []);
+function VisitorEventView() {
+	const [cityArray, setCityArray] = useState<(Event & { id: string })[]>([]);
+	const [inputValue, setInputValue] = useState("");
 
-  const fetchByCity = async (q: Query<DocumentData, DocumentData>) => {
-    // console.log(inputValue, "inputvalue");
-    const querySnapshot = await getDocs(q);
-    // console.log("querySnapshot", querySnapshot);
-    const foundArray: (Event & {id: string})[] = querySnapshot.docs.map(
-      (doc) => {
-        const eventData = doc.data() as Event;
-        return {...eventData, id: doc.id};
-      }
-    );
+	const fetchByCity = useCallback(async () => {
+		const publicAndCityEventQuery = query(
+			collection(db, "events"),
+			where("eventType", "==", "public"),
+			where("city", "==", inputValue)
+		);
 
-    setCityArray(foundArray);
-    // console.log(foundArray, "foundArray");
-  };
+		const publicEventQuery = query(
+			collection(db, "events"),
+			where("eventType", "==", "public")
+		);
 
-  const HandleClick = () => {
-    const q = query(collection(db, 'events'), where('city', '==', inputValue));
-    fetchByCity(q).catch((e) => console.log(e));
-  };
+		console.log(inputValue, "inputvalue");
+		const querySnapshot = await getDocs(
+			inputValue.length == 0 ? publicEventQuery : publicAndCityEventQuery
+		);
 
-  return (
-    <>
-      <h1>Testing City Filters</h1>
+		console.log("querySnapshot", querySnapshot);
+		const foundArray: (Event & { id: string })[] = querySnapshot.docs.map(
+			(doc) => {
+				const eventData = doc.data() as Event;
+				return { ...eventData, id: doc.id };
+			}
+		);
+
+		setCityArray(foundArray);
+		console.log(foundArray, "foundArray");
+	}, [inputValue]);
+
+	const HandleClick = () => {
+		fetchByCity().catch((e) => console.log(e));
+	};
+
+	useEffect(() => {
+		fetchByCity().catch((e) => console.log(e));
+	}, [fetchByCity]);
+
+	return (
+		<>
+			<h1>Events</h1>
+
 
       <div className='search-bar'>
         <input
@@ -57,20 +65,23 @@ function FilterByCity() {
         <button onClick={HandleClick}>Click me</button>
       </div>
 
-      {cityArray.length === 0 ? (
-        <p>No events available for this city - why not try somewhere else?</p>
-      ) : (
-        cityArray.map((e) => {
-          return (
-            <>
-              <p>Name: {e.eventName}</p>
-              <p>City: {e.city}</p>
-            </>
-          );
-        })
-      )}
-    </>
-  );
+
+			{cityArray.length === 0 ? (
+				<p>No events available for this city - why not try somewhere else?</p>
+			) : (
+				cityArray.map((e) => {
+					return (
+						<>
+							<p>Name: {e.eventName}</p>
+							<p>City: {e.city}</p>
+							<p>Type: {e.eventType}</p>
+						</>
+					);
+				})
+			)}
+		</>
+	);
+
 }
 
-export default FilterByCity;
+export default VisitorEventView;

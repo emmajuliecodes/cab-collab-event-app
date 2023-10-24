@@ -1,3 +1,4 @@
+
 import {useState, type FormEvent} from 'react';
 
 type Props = {
@@ -47,6 +48,7 @@ const AuthRegisterForm = ({title, handleSubmit}: Props) => {
       </form>
     </div>
   );
+
 };
 
 export default AuthRegisterForm;

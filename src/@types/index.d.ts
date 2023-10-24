@@ -15,23 +15,28 @@ export interface UserProfileData {
 }
 
 export interface Event {
-  date: string;
-  time: string;
-  attendees: Array[];
-  invited: Array[];
-  declined: Array[];
-  pending: Array[];
-  city: string;
-  description: Array[];
-  eventName: string;
-  host: string | User;
-  map_location: Location;
-  street_address: Location;
-  image: string;
-  public: boolean;
-  creator_id: string;
+
+	date: string;
+	time: string;
+	eventType: string;
+	attendees: Array[];
+	invitees: Array[];
+	declined: Array[];
+	pending: Array[];
+	city: string;
+	description: string;
+	eventName: string;
+	host: string | User;
+	// Location: is a type only used for window.location
+	// https://developer.mozilla.org/en-US/docs/Web/API/Location
+	// map_location: Location;
+	street_address: string;
+	image: string;
+	public: boolean;
+	creator_id: string;
+
 }
 
-// public or private - true fales - use for My Events
+
 
 export type Users = User[];
