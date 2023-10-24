@@ -1,182 +1,226 @@
-import { createContext, useState, useEffect, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import {createContext, useState, useEffect, type FormEvent} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {
-	type User,
-	createUserWithEmailAndPassword,
-	onAuthStateChanged,
-	signOut,
-	signInWithEmailAndPassword,
-} from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
-import { auth, db } from "../firebase/FirebaseConfig";
-import { toast } from "react-toastify";
+
+  type User,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  // updateDoc,
+  // doc,
+} from 'firebase/firestore';
+import {auth, db} from '../firebase/FirebaseConfig';
+import {toast} from 'react-toastify';
+import {UserProfileData} from '../@types';
 
 interface ContextType {
-	user: User | null;
-	handleLogin: (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string
-	) => void;
-	logout: () => void;
-	handleRegister: (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string,
-		name: string,
-		avatar: string
-	) => void;
-	// handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
-	isChecked: boolean;
+  user: User | null;
+  userData: UserProfileData | undefined;
+
+  handleLogin: (
+    e: FormEvent<HTMLFormElement>,
+    email: string,
+    password: string
+  ) => void;
+  logout: () => void;
+  handleRegister: (
+    e: FormEvent<HTMLFormElement>,
+    name: string,
+    email: string,
+    password: string
+  ) => void;
+  isChecked: boolean;
 }
 
 const defaultValue: ContextType = {
-	user: null,
-	handleLogin: () => {
-		throw Error("No provider");
-	},
-	logout: () => {
-		throw Error("No provider");
-	},
-	handleRegister: () => {
-		throw Error("No provider");
-	},
+  user: null,
+  userData: undefined,
+  handleLogin: () => {
+    throw Error('No provider');
+  },
 
-	isChecked: false,
+  logout: () => {
+    throw Error('No provider');
+  },
+  handleRegister: () => {
+    throw Error('No provider');
+  },
+  isChecked: false,
+
 };
 
 export const AuthContext = createContext(defaultValue);
 
 interface Props {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export const AuthContextProvider = (props: Props) => {
-	const [user, setUser] = useState<User | null>(null);
-	const [isChecked, setIsChecked] = useState(false);
-	const navigate = useNavigate();
 
-	const logout = () => {
-		signOut(auth)
-			.then(() => {
-				setUser(null);
-				toast.info("logged out");
-			})
-			.catch((error) => {
-				// An error happened.
-				console.log(error);
-			});
-	};
+  const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserProfileData | undefined>(
+    undefined
+  );
+  const [isChecked, setIsChecked] = useState(false);
+  const navigate = useNavigate();
 
-	const handleRegister = (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string,
-		name: string,
-		avatar: string
-	) => {
-		e.preventDefault();
-		createUserWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				setUser(user);
-				console.log("new user", user);
+  // =========================================
+  console.log('moment of truth', user, userData);
+  // ==================================
 
-				const uid = user.uid;
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+        toast.info('logged out');
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error);
+      });
+  };
 
-				addDoc(collection(db, "users"), {
-					email: user.email,
-					uid: uid,
-					name,
-					avatar,
-				});
+  const handleRegister = (
+    e: FormEvent<HTMLFormElement>,
+    name: string,
+    email: string,
+    password: string
+  ) => {
+    e.preventDefault();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUser(user);
+        console.log('new user', user);
 
-				// const updateUser = doc(db, "users", "id");
+        toast.success('Success, you are registered');
+        const data = {
+          email: user.email!,
+          uid: user.uid,
+          name: name,
+          city: '',
+          phone: '',
+          myEvents: [],
+          invites: [],
+          declined: [],
+          attending: [],
+        };
+        addDoc(collection(db, 'users'), data);
+        setUserData(data);
 
-				// updateDoc(updateUser, {
-				// 	name,
-				// });
+        navigate('/');
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(error);
+      });
+  };
 
-				toast.success("Success, you are registered");
-			})
-			.catch((error) => {
-				// const errorCode = error.code;
-				// const errorMessage = error.message;
-				console.log(error);
-			});
-	};
+  const handleLogin = (
+    e: FormEvent<HTMLFormElement>,
+    email: string,
+    password: string
+  ) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUser(user);
+        console.log(user);
 
-	// async function handleUpdate() {
-	// 	try {
-	// 		const updateUser = doc(db, "users", "id");
+        const q = query(collection(db, 'users'), where('uid', '==', user.uid));
+        getDocs(q).then((querySnapshot) => {
+          const uData: UserProfileData[] = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data() as UserProfileData;
+            uData.push(data);
+            console.log(doc.id, ' => ', doc.data());
+          });
+          setUserData(uData[0]);
 
-	// 		await updateDoc(updateUser, {
-	// 			name: "",
-	// 		});
-	// 		toast.success("Success, you have a name");
-	// 		navigate("/");
-	// 	} catch (e) {
-	// 		console.error("Error adding document: ", e);
-	// 	}
-	// }
+          toast.success('Success, you are logged in');
+          navigate('/');
+        });
+        // ...
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(error);
+      });
+  };
 
-	const handleLogin = (
-		e: FormEvent<HTMLFormElement>,
-		email: string,
-		password: string
-	) => {
-		e.preventDefault();
-		signInWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				setUser(user);
-				console.log(user);
-				toast.success("Success, you are logged in");
-				navigate("/");
-				// ...
-			})
-			.catch((error) => {
-				// const errorCode = error.code;
-				// const errorMessage = error.message;
-				console.log(error);
-			});
-	};
+  const checkActiveUser = async () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        getUserProfileByUID(user.uid);
+      } else {
+        setUser(null);
+      }
+      setIsChecked(true);
+    });
+  };
 
-	const checkActiveUser = () => {
-		onAuthStateChanged(auth, (user) => {
-			if (user) {
-				// User is signed in, see docs for a list of available properties
-				// https://firebase.google.com/docs/reference/js/auth.user
-				// const uid = user.uid;
-				setUser(user);
-				console.log(user, "user");
-				// ...
-			} else {
-				setUser(null);
-				// User is signed out
-				// ...
-			}
-			setIsChecked(true);
-		});
-	};
+  //TODO: Find out why the func is not assigning user profile details to the userData setState
+  const getUserProfileByUID = (uid: string) => {
+    const q = query(collection(db, 'users'), where('uid', '==', uid));
+    getDocs(q).then((querySnapshot) => {
+      const uData: UserProfileData[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data() as UserProfileData;
+        uData.push(data);
+        console.log(doc.id, ' => ', doc.data());
+      });
+      setUserData(uData[0]);
+    });
 
-	useEffect(() => {
-		checkActiveUser();
-	}, []);
+    // try {
+    //   if (user) {
+    //     const usersCollection = collection(db, 'users');
+    //     const q = query(usersCollection, where('uid', '==', uid));
+    //     const querySnapshot = await getDocs(q);
+    //     const userDoc = querySnapshot.docs[0];
+    //     const userData = userDoc.data();
+    //     setUserData(userData as UserProfileData);
+    //   }
+    // } catch (error) {
+    //   console.error('Error finding user by UID:', error);
+    //   throw error;
+    // }
+  };
 
-	return (
-		<AuthContext.Provider
-			value={{
-				user,
-				handleLogin,
-				logout,
-				handleRegister,
+  useEffect(() => {
+    checkActiveUser();
+  }, []);
 
-				isChecked,
-			}}>
-			{props.children}
-		</AuthContext.Provider>
-	);
+  // useEffect(() => {
+  //   getUserProfileByUID();
+  // }, [user]);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        handleLogin,
+        userData,
+        logout,
+        handleRegister,
+        isChecked,
+      }}>
+      {props.children}
+    </AuthContext.Provider>
+  );
+
 };
