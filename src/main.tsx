@@ -21,7 +21,7 @@ import Register from "./views/Register.tsx";
 import { UsersContextProvider } from "./context/UsersContext.tsx";
 import EventForm from "./components/EventForm.tsx";
 
-// import FilterPublic from "./views/Testing.tsx";
+import TestingPage from "./views/Testing.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -69,6 +69,11 @@ const router = createBrowserRouter([
 					{
 						path: "/register",
 						element: <Register />,
+					},
+
+					{
+						path: "/testing",
+						element: <TestingPage />,
 					},
 					{
 						path: "/listevent",

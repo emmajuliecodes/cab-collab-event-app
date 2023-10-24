@@ -53,39 +53,39 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 	// 		imageUrl = (await uploadImageAndGetURL()) || "";
 	// 		setUploading(false);
 
-			return (
-				<div>
-					<h1>{title}</h1>
-					<form onSubmit={(e) => handleSubmit(e, email, password, name)}>
-						<label htmlFor="email">Email </label>
-						<input
-							placeholder="Add your email"
-							id="email"
-							type="email"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-						/>
-						<br></br>
-						<label htmlFor="password">Password </label>
-						<input
-							placeholder="Add your password"
-							id="password"
-							type="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-						/>
-						<label htmlFor="name">Name</label>
-						<input
-							placeholder="Add your name"
-							id="name"
-							type="name"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-						/>
+	return (
+		<div>
+			<h1>{title}</h1>
+			<form onSubmit={(e) => handleSubmit(e, email, password, name)}>
+				<label htmlFor="email">Email </label>
+				<input
+					placeholder="Add your email"
+					id="email"
+					type="email"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+				/>
+				<br></br>
+				<label htmlFor="password">Password </label>
+				<input
+					placeholder="Add your password"
+					id="password"
+					type="password"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+				/>
+				<label htmlFor="name">Name</label>
+				<input
+					placeholder="Add your name"
+					id="name"
+					type="name"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+				/>
 
-						<br></br>
+				<br></br>
 
-						<label htmlFor="avatar">Avatar</label>
+				{/* <label htmlFor="avatar">Avatar</label>
 						<input
 							placeholder="Add your avatar"
 							id="avatar"
@@ -94,16 +94,15 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 								const file = e.target.files ? e.target.files[0] : null;
 								setAvatar(file);
 							}}
-						/>
+						/> */}
 
-						<br></br>
+				<br></br>
 
-						<button type="submit">{title}</button>
-					</form>
-					{uploading && <p>Uploading avatar image...</p>}
-				</div>
-			);
-		};
-	}
-	
+				<button type="submit">{title}</button>
+			</form>
+			{/* {uploading && <p>Uploading avatar image...</p>} */}
+		</div>
+	);
+};
+
 export default AuthRegisterForm;
