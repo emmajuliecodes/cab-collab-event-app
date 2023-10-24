@@ -41,27 +41,24 @@ h1 {
 button {
 	border-radius: 1px;
 	border: 1px solid transparent;
-	padding: 0.5em 0.5em;
+	padding: 0.4em 0.4em;
 	margin-right: 0.25em;
 	margin-left: 0.25em;
-	box-shadow: 4px 4px 10px #bb72a8;
+	box-shadow: 3px 3px 10px #bb72a8;
 	font-size: 1em;
 	font-weight: 500;
 	font-family: inherit;
 	background-color: #ffffff;
 	cursor: pointer;
 	transition: border-color 0.25s;
-
-	/* Light mode examples
-	box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-		rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-		rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px; */
 }
 button:hover {
 	border-color: #bb72a8;
+	box-shadow: 5px 5px 15px #bb72a8;
 	border: 1px;
 	padding: 0.6em;
 	border-radius: 2px;
+	opacity: 1;
 }
 
 @media (prefers-color-scheme: dark) {
