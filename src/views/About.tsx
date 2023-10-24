@@ -1,5 +1,3 @@
-
-=======
 import { db } from "../firebase/FirebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { Event } from "../@types";
@@ -51,20 +49,18 @@ function VisitorEventView() {
 		<>
 			<h1>Events</h1>
 
-
-      <div className='search-bar'>
-        <input
-          type='text'
-          id='citysearch'
-          name='citysearch'
-          placeholder='Search for a city...'
-          onChange={(i) => {
-            setInputValue(i.target.value);
-          }}
-        />
-        <button onClick={HandleClick}>Click me</button>
-      </div>
-
+			<div className="search-bar">
+				<input
+					type="text"
+					id="citysearch"
+					name="citysearch"
+					placeholder="Search for a city..."
+					onChange={(i) => {
+						setInputValue(i.target.value);
+					}}
+				/>
+				<button onClick={HandleClick}>Click me</button>
+			</div>
 
 			{cityArray.length === 0 ? (
 				<p>No events available for this city - why not try somewhere else?</p>
@@ -81,7 +77,6 @@ function VisitorEventView() {
 			)}
 		</>
 	);
-
 }
 
 export default VisitorEventView;
