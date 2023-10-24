@@ -10,37 +10,42 @@ function App() {
 	const redirect = useNavigate();
 	return (
 		<>
+			<br></br>
+
+			<h1>EventSpace</h1>
+			<h2>Much better than Facebook events...</h2>
+			<br></br>
+			<button onClick={() => redirect("/listevent")}>Create event</button>
+			<br></br>
+			<br></br>
+			<button onClick={() => redirect("/events")}>Browse events</button>
+			<br></br>
+			<br></br>
 			<div
-				className="background-video-container"
-				// style={{
-				// 	position: "absolute",
-				// 	top: 0,
-				// 	zIndex: -50,
-				// 	height: "100vh",
-				// 	width: "100vw ",
-				// 	display: "flex",
-				// 	justifyContent: "center",
-				// 	alignItems: "center",
-				// }}
-			>
-				<video autoPlay loop muted id="homevideo">
+				style={{
+					position: "absolute",
+					top: 0,
+					zIndex: -50,
+					height: "100vh",
+					width: "100vw ",
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+				}}>
+				<video
+					autoPlay
+					loop
+					muted
+					id="homevideo"
+					style={{
+						objectFit: "cover",
+						height: "100% ",
+						width: "100%",
+					}}>
 					<source src={spacewave} type="video/mp4" />
 					{/* <source src={stars} type="video/mp4" /> */}
 					{/* <source src={ink} type="video/mp4" /> */}
 				</video>
-
-				<br></br>
-				<div className="homepage-copy-container">
-					<h1>EventSpace</h1>
-					<h2>Much better than Facebook events...</h2>
-					<br></br>
-					<button onClick={() => redirect("/listevent")}>Create event</button>
-					<br></br>
-					<br></br>
-					<button onClick={() => redirect("/events")}>Browse events</button>
-					<br></br>
-					<br></br>
-				</div>
 			</div>
 		</>
 	);

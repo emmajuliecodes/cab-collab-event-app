@@ -1,24 +1,19 @@
-/* export const styles: string; */
+/* 
 
 .background-video-container {
-	position: "relative";
+	position: "absolute";
 	top: 0;
-	/* z-index: -50; */
+	z-index: -50;
 	height: "100vh";
 	width: "100vw ";
 	display: "flex";
-	justify-content: "center";
-	align-items: "center";
-}
+	object-fit: cover;
+	/* justify-content: "center";
+	align-items: "center"; */
+/* }
 
-.background-video-container video {
-	object-fit: "cover";
-	height: "100% ";
-	width: "100%";
-}
-
-.background-video-container .homepage-copy-container {
+.homepage-copy-container {
 	z-index: 1;
-	position: relative;
+	position: absolute;
 	text-align: center;
-}
+} */
