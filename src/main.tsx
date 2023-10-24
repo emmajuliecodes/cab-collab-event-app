@@ -22,6 +22,7 @@ import { UsersContextProvider } from "./context/UsersContext.tsx";
 import EventForm from "./components/EventForm.tsx";
 
 // import FilterPublic from "./views/Testing.tsx";
+require("./App.css");
 
 const router = createBrowserRouter([
 	{
