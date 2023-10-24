@@ -1,37 +1,25 @@
 import {useContext, useEffect, useState} from 'react';
 import {db} from '../firebase/FirebaseConfig';
 import {collection, getDocs, query, where} from 'firebase/firestore';
-import {AuthContext, UserProfileData} from '../context/AuthContext';
+import {AuthContext} from '../context/AuthContext';
+import {Event, UserProfileData} from '../@types';
 
 const Profile = () => {
-  const {user} = useContext(AuthContext);
-  const [userData, setUserData] = useState<UserProfileData | undefined>(
-    undefined
-  );
-  const [loading, setLoading] = useState<boolean>(false);
+  const {userData} = useContext(AuthContext);
+  const [setUserProfile] = useState<UserProfileData | undefined>(userData);
+  // const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  console.log('user profile');
 
-  const findUserByUID = async (uid: string) => {
-    try {
-      const usersCollection = collection(db, 'users');
-      const q = query(usersCollection, where('uid', '==', uid));
-      const querySnapshot = await getDocs(q);
-      // Assuming there's only one document with the same UID
-      const userDoc = querySnapshot.docs[0];
-      const userData = userDoc.data();
-      setUserData(userData as UserProfileData);
-    } catch (error) {
-      console.error('Error finding user by UID:', error);
-      throw error;
-    }
-  };
-  useEffect(() => {
-    if (user) findUserByUID(user.uid);
-  }, []);
+  // useEffect(() => {
+  //   console.log('testong', userData);
+  //   if (userData) (userData);
+  // }, [userData]);
+  // const {myEvents = []} = userProfile || {};
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  // if (loading) {
+  //   return <p>Loading...</p>;
+  // }
 
   if (error) {
     return <p>Error: {error}</p>;
@@ -42,25 +30,23 @@ const Profile = () => {
       <h1>User Profiles</h1>
       <div>
         {userData && (
-          // Object.entries(userData).map(([key, value]) => (
-          //   <p key={key}>
-          //     <strong>{key}:</strong> {value}
-          //   </p>
-          // ))
           <>
-            {/* // Object.entries(userData).map(([key, value])( //{' '} */}
-            {/* <p key={key}>
-              // <strong>{key}:</strong> {value}
-              //{' '}
-            </p> */}
-            {/* // )) */}
             <p>Name: {userData.name.toUpperCase()}</p>
             <p>Email: {userData.email}</p>
             <p>City: {userData.city}</p>
-            <p>My Events: {userData.myEvents}</p>
             <p>Invites: {userData.invites} </p>
             <p>Attending: {userData.attending}</p>
             <p>Declined: {userData.declined}</p>
+            My Events:
+            <ul>
+              {userData.myEvents.map(
+                (event, idx) => {
+                  return <li key={idx}>{event}</li>;
+                }
+
+                //TODO: Get this displaying events
+              )}
+            </ul>
           </>
         )}
       </div>

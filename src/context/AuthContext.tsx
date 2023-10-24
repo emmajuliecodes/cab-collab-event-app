@@ -18,23 +18,12 @@ import {
 } from 'firebase/firestore';
 import {auth, db} from '../firebase/FirebaseConfig';
 import {toast} from 'react-toastify';
-
-export interface UserProfileData {
-  name: string;
-  phone: string;
-  email: string;
-  city: string;
-  myEvents: string[];
-  attending: string[];
-  declined: string[];
-  invites: string[];
-  uid: string;
-}
+import {UserProfileData} from '../@types';
 
 interface ContextType {
   user: User | null;
-  userData?: UserProfileData;
-  getUserProfileByUID: (uid: string) => Promise<void>;
+  userData: UserProfileData | undefined;
+
   handleLogin: (
     e: FormEvent<HTMLFormElement>,
     email: string,
@@ -56,9 +45,7 @@ const defaultValue: ContextType = {
   handleLogin: () => {
     throw Error('No provider');
   },
-  getUserProfileByUID: () => {
-    throw Error('No provider');
-  },
+
   logout: () => {
     throw Error('No provider');
   },
@@ -81,6 +68,10 @@ export const AuthContextProvider = (props: Props) => {
   );
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
+
+  // =========================================
+  console.log('moment of truth', user, userData);
+  // ==================================
 
   const logout = () => {
     signOut(auth)
@@ -109,17 +100,19 @@ export const AuthContextProvider = (props: Props) => {
         console.log('new user', user);
 
         toast.success('Success, you are registered');
-        addDoc(collection(db, 'users'), {
-          email: user.email,
+        const data = {
+          email: user.email!,
           uid: user.uid,
           name: name,
           city: '',
           phone: '',
-          myEvents: [''],
-          invites: [''],
-          declined: [''],
-          attending: [''],
-        });
+          myEvents: [],
+          invites: [],
+          declined: [],
+          attending: [],
+        };
+        addDoc(collection(db, 'users'), data);
+        setUserData(data);
 
         navigate('/');
       })
@@ -142,8 +135,20 @@ export const AuthContextProvider = (props: Props) => {
         const user = userCredential.user;
         setUser(user);
         console.log(user);
-        toast.success('Success, you are logged in');
-        navigate('/');
+
+        const q = query(collection(db, 'users'), where('uid', '==', user.uid));
+        getDocs(q).then((querySnapshot) => {
+          const uData: UserProfileData[] = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data() as UserProfileData;
+            uData.push(data);
+            console.log(doc.id, ' => ', doc.data());
+          });
+          setUserData(uData[0]);
+
+          toast.success('Success, you are logged in');
+          navigate('/');
+        });
         // ...
       })
       .catch((error) => {
@@ -157,34 +162,49 @@ export const AuthContextProvider = (props: Props) => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        getUserProfileByUID(user.uid);
       } else {
         setUser(null);
       }
       setIsChecked(true);
     });
   };
+
   //TODO: Find out why the func is not assigning user profile details to the userData setState
-  const getUserProfileByUID = async (uid: string) => {
-    try {
-      const usersCollection = collection(db, 'users');
-      const q = query(usersCollection, where('uid', '==', uid));
-      const querySnapshot = await getDocs(q);
-      // Assuming there's only one document with the same UID
-      const userDoc = querySnapshot.docs[0];
-      const userData = userDoc.data();
-      console.log('data1', userData);
-      setUserData(userData as UserProfileData);
-    } catch (error) {
-      console.error('Error finding user by UID:', error);
-      throw error;
-    }
+  const getUserProfileByUID = (uid: string) => {
+    const q = query(collection(db, 'users'), where('uid', '==', uid));
+    getDocs(q).then((querySnapshot) => {
+      const uData: UserProfileData[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data() as UserProfileData;
+        uData.push(data);
+        console.log(doc.id, ' => ', doc.data());
+      });
+      setUserData(uData[0]);
+    });
+
+    // try {
+    //   if (user) {
+    //     const usersCollection = collection(db, 'users');
+    //     const q = query(usersCollection, where('uid', '==', uid));
+    //     const querySnapshot = await getDocs(q);
+    //     const userDoc = querySnapshot.docs[0];
+    //     const userData = userDoc.data();
+    //     setUserData(userData as UserProfileData);
+    //   }
+    // } catch (error) {
+    //   console.error('Error finding user by UID:', error);
+    //   throw error;
+    // }
   };
 
   useEffect(() => {
     checkActiveUser();
-    if (user) getUserProfileByUID(user.uid);
-    console.log('d2', userData);
   }, []);
+
+  // useEffect(() => {
+  //   getUserProfileByUID();
+  // }, [user]);
 
   return (
     <AuthContext.Provider
@@ -192,7 +212,6 @@ export const AuthContextProvider = (props: Props) => {
         user,
         handleLogin,
         userData,
-        getUserProfileByUID,
         logout,
         handleRegister,
         isChecked,
