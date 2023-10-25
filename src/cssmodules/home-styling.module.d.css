@@ -1,0 +1,19 @@
+/* 
+
+.background-video-container {
+	position: "absolute";
+	top: 0;
+	z-index: -50;
+	height: "100vh";
+	width: "100vw ";
+	display: "flex";
+	object-fit: cover;
+	/* justify-content: "center";
+	align-items: "center"; */
+/* }
+
+.homepage-copy-container {
+	z-index: 1;
+	position: absolute;
+	text-align: center;
+} */

@@ -1,21 +1,20 @@
 export interface NotOk {
-  error: string;
+	error: string;
 }
 
 export interface UserProfileData {
-  name: string;
-  phone: string;
-  email: string;
-  city: string;
-  myEvents: string[];
-  attending: string[];
-  declined: string[];
-  invites: string[];
-  uid: string;
+	name: string;
+	phone: string;
+	email: string;
+	city: string;
+	myEvents: string[];
+	attending: string[];
+	declined: string[];
+	invites: string[];
+	uid: string;
 }
 
 export interface Event {
-
 	date: string;
 	time: string;
 	eventType: string;
@@ -34,9 +33,11 @@ export interface Event {
 	image: string;
 	public: boolean;
 	creator_id: string;
-
 }
 
-
+export interface LightDarkModeContextType {
+	isDarkMode: boolean;
+	toggleMode: () => void;
+}
 
 export type Users = User[];

@@ -7,7 +7,7 @@ import {
 	uploadBytesResumable,
 	getDownloadURL,
 } from "firebase/storage";
-import { FirebaseUser, UsersContext } from "../context/UsersContext";
+
 import {} from "firebase/database";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
