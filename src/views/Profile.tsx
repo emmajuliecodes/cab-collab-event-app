@@ -2,153 +2,110 @@ import { useState, useEffect, useContext } from "react";
 import { db } from "../firebase/FirebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { AuthContext } from "../context/AuthContext";
+import { Event } from "../@types";
+import getEvents from "../utils/getEvents";
 
 const UserProfile = () => {
-	const { user } = useContext(AuthContext);
-	const [eventDetails, setEventDetails] = useState<any[]>([]); // Store event details
-	const [pendingInvites, setPendingInvites] = useState<string[]>([]);
-	const [acceptedInvites, setAcceptedInvites] = useState<string[]>([]);
-	const [declinedInvites, setDeclinedInvites] = useState<string[]>([]);
+  const { user, userData } = useContext(AuthContext);
+  const [eventDetails, setEventDetails] = useState<Event[]>([]); // Store event details
+  const [invites, setInvites] = useState<Event[]>([]);
+  const [acceptedInvites, setAcceptedInvites] = useState<Event[]>([]);
+  const [declinedInvites, setDeclinedInvites] = useState<Event[]>([]);
 
-	useEffect(() => {
-		// Fetch the user's pending invites when the component mounts
-		const fetchUserInvites = async () => {
-			console.log("fetchUserInvites is called");
+  useEffect(() => {
+    // Fetch the user's pending invites when the component mounts
+    const fetchUserInvites = async () => {
+      console.log("fetchUserInvites is called");
 
-			// don't need to do this as we'll have user from context
+      if (!user && !userData) {
+        console.log("No user found");
+        return;
+      }
+      if (userData) {
+        try {
+          const events1 = await getEvents(userData.myEvents);
+          setEventDetails(events1);
+          const events2 = await getEvents(userData.attending);
+          setAcceptedInvites(events2);
+          const events3 = await getEvents(userData.declined);
+          setDeclinedInvites(events3);
+        } catch (error) {
+          console.error("Error fetching user document:", error);
+        }
+      }
+    };
 
-			if (!user) {
-				console.log("No user found");
-				return;
-			}
-			console.log("User exists:", user.uid);
+    fetchUserInvites().catch((e) => console.log(e));
+  }, [userData]);
 
-			try {
-				const userDocRef = doc(db, "users", user.uid);
-				const userDoc = await getDoc(userDocRef);
+  const handleResponse = async (eventId: string, response: string) => {
+    if (!user) return; // Check if user is not null
 
-				if (!userDoc.exists) {
-					console.log(
-						"User document doesn't exist in database for UID:",
-						user.uid
-					);
-					return;
-				}
+    const userDocRef = doc(db, "users", user.uid);
+    const eventDocRef = doc(db, "events", eventId);
 
-				console.log("User document exists");
-				const userData = userDoc.data();
+    const userDoc = await getDoc(userDocRef);
+    const eventDoc = await getDoc(eventDocRef);
 
-				if (!userData) {
-					console.error("User data is undefined for UID:", user.uid);
-					return;
-				}
+    if (userDoc.exists() && eventDoc.exists()) {
+      const userData = userDoc.data();
+      const eventData = eventDoc.data();
 
-				// array of ids for pending invites. Take pending invite block and tell it where to save - string name of property, loop over and set state. Same approach for all the other event groups. String must be exactly the same
+      const updatedPendingInvites = userData.pendingInvites.filter((id: string) => id !== eventId);
+      const updatedAcceptedInvites: string[] = [...(userData.acceptedInvites || [])];
+      const updatedDeclinedInvites: string[] = [...(userData.declinedInvites || [])];
 
-				const pendingInvites = userData.pendingInvites || [];
-				console.log("Pending invites:", pendingInvites);
+      const eventAcceptedUsers: string[] = [...(eventData.acceptedUsers || [])];
+      const eventDeclinedUsers: string[] = [...(eventData.declinedUsers || [])];
 
-				// Fetch event details for each pending invite
-				const events = await Promise.all(
-					pendingInvites.map(async (eventId: string) => {
-						const eventDocRef = doc(db, "events", eventId);
-						const eventDoc = await getDoc(eventDocRef);
-						if (!eventDoc.exists()) {
-							console.warn(`Event with ID ${eventId} does not exist.`);
-							return null; // Return null for non-existent events
-						}
-						return { ...eventDoc.data(), id: eventId }; // Include the eventId in the returned object
-					})
-				);
-				console.log("Fetched events:", events);
+      if (response === "accept") {
+        updatedAcceptedInvites.push(eventId);
+        eventAcceptedUsers.push(user.uid);
+      } else {
+        updatedDeclinedInvites.push(eventId);
+        eventDeclinedUsers.push(user.uid);
+      }
 
-				setEventDetails(events.filter(Boolean)); // Filter out any null values
-			} catch (error) {
-				console.error("Error fetching user document:", error);
-			}
-		};
+      await updateDoc(userDocRef, {
+        pendingInvites: updatedPendingInvites,
+        acceptedInvites: updatedAcceptedInvites,
+        declinedInvites: updatedDeclinedInvites,
+      });
 
-		fetchUserInvites();
-	}, [user]);
+      await updateDoc(eventDocRef, {
+        acceptedUsers: eventAcceptedUsers,
+        declinedUsers: eventDeclinedUsers,
+      });
 
-	const handleResponse = async (eventId: string, response: string) => {
-		if (!user) return; // Check if user is not null
+      setPendingInvites(updatedPendingInvites);
+      setAcceptedInvites(updatedAcceptedInvites);
+      setDeclinedInvites(updatedDeclinedInvites);
+    }
+  };
 
-		const userDocRef = doc(db, "users", user.uid);
-		const eventDocRef = doc(db, "events", eventId);
+  return (
+    <div>
+      <h2>Pending Invites</h2>
+      {eventDetails.map((event) => (
+        <div key={event.id}>
+          <h3>{event.eventName}</h3>
+          <p>Date: {event.date}</p>
+          <p>Location: {event.location}</p>
+          <button onClick={() => handleResponse(event.id, "accept")}>Accept</button>
+          <button onClick={() => handleResponse(event.id, "decline")}>Decline</button>
+        </div>
+      ))}
+      <h2>Accepted Invites</h2>
+      {acceptedInvites.map((eventId) => (
+        <p key={eventId}>{eventId}</p>
+      ))}
 
-		const userDoc = await getDoc(userDocRef);
-		const eventDoc = await getDoc(eventDocRef);
-
-		if (userDoc.exists() && eventDoc.exists()) {
-			const userData = userDoc.data();
-			const eventData = eventDoc.data();
-
-			const updatedPendingInvites = userData.pendingInvites.filter(
-				(id: string) => id !== eventId
-			);
-			const updatedAcceptedInvites: string[] = [
-				...(userData.acceptedInvites || []),
-			];
-			const updatedDeclinedInvites: string[] = [
-				...(userData.declinedInvites || []),
-			];
-
-			const eventAcceptedUsers: string[] = [...(eventData.acceptedUsers || [])];
-			const eventDeclinedUsers: string[] = [...(eventData.declinedUsers || [])];
-
-			if (response === "accept") {
-				updatedAcceptedInvites.push(eventId);
-				eventAcceptedUsers.push(user.uid);
-			} else {
-				updatedDeclinedInvites.push(eventId);
-				eventDeclinedUsers.push(user.uid);
-			}
-
-			await updateDoc(userDocRef, {
-				pendingInvites: updatedPendingInvites,
-				acceptedInvites: updatedAcceptedInvites,
-				declinedInvites: updatedDeclinedInvites,
-			});
-
-			await updateDoc(eventDocRef, {
-				acceptedUsers: eventAcceptedUsers,
-				declinedUsers: eventDeclinedUsers,
-			});
-
-			setPendingInvites(updatedPendingInvites);
-			setAcceptedInvites(updatedAcceptedInvites);
-			setDeclinedInvites(updatedDeclinedInvites);
-		}
-	};
-
-	return (
-		<div>
-			<h2>Pending Invites</h2>
-			{eventDetails.map((event) => (
-				<div key={event.id}>
-					<h3>{event.eventName}</h3>
-					<p>Date: {event.date}</p>
-					<p>Location: {event.location}</p>
-					<button onClick={() => handleResponse(event.id, "accept")}>
-						Accept
-					</button>
-					<button onClick={() => handleResponse(event.id, "decline")}>
-						Decline
-					</button>
-				</div>
-			))}
-			<h2>Accepted Invites</h2>
-			{acceptedInvites.map((eventId) => (
-				<p key={eventId}>{eventId}</p>
-			))}
-
-			<h2>Declined Invites</h2>
-			{declinedInvites.map((eventId) => (
-				<p key={eventId}>{eventId}</p>
-			))}
-		</div>
-	);
+      <h2>Declined Invites</h2>
+      {declinedInvites.map((eventId) => (
+        <p key={eventId}>{eventId}</p>
+      ))}
+    </div>
+  );
 };
 
 export default UserProfile;

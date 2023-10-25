@@ -52,10 +52,6 @@ export const AuthContextProvider = (props: Props) => {
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
-  // =========================================
-  console.log("moment of truth", user, userData);
-  // ==================================
-
   const logout = () => {
     signOut(auth)
       .then(() => {
@@ -67,7 +63,6 @@ export const AuthContextProvider = (props: Props) => {
         console.log(error);
       });
   };
-
   const handleRegister = (e: FormEvent<HTMLFormElement>, name: string, email: string, password: string) => {
     e.preventDefault();
     createUserWithEmailAndPassword(auth, email, password)
