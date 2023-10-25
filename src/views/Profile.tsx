@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useContext } from "react";
 import { db } from "../firebase/FirebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -108,4 +109,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default Profile;

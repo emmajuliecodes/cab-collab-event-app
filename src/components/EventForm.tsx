@@ -1,8 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { db } from "../firebase/FirebaseConfig";
 import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { FirebaseUser, UsersContext } from "../context/UsersContext";
+import {
+	getStorage,
+	ref,
+	uploadBytesResumable,
+	getDownloadURL,
+} from "firebase/storage";
+
 import {} from "firebase/database";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
@@ -13,6 +18,7 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const EventForm: React.FC = () => {
+
   const [formData, setFormData] = useState({
     date: "",
     startTime: "",
@@ -166,51 +172,79 @@ const EventForm: React.FC = () => {
             renderInput={(params) => <TextField {...params} label="Invitees" placeholder="Search by email" />}
           />
           {/* <label htmlFor="invitees">Invitees:</label>
+
           <input type="text" id="invitees" name="invitees" value={formData.invitees} onChange={handleChange} /> */}
-        </div>
-        <div>
-          <label htmlFor="location">Location:</label>
-          <input type="text" id="location" name="location" value={formData.location} onChange={handleChange} />
-        </div>
-        <div>
-          <label htmlFor="description">Description:</label>
-          <textarea id="description" name="description" value={formData.description} onChange={handleChange} />
-        </div>
-        <div>
-          <label htmlFor="eventName">Event Name:</label>
-          <input type="text" id="eventName" name="eventName" value={formData.eventName} onChange={handleChange} />
-        </div>
-        <div>
-          <label htmlFor="host">Host:</label>
-          <input type="text" id="host" name="host" value={formData.host} onChange={handleChange} />
-        </div>
-        <div>
-          <label htmlFor="image">Image:</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={(e) => {
-              const file = e.target.files ? e.target.files[0] : null;
-              setImageFile(file);
-            }}
-          />
-        </div>
-        <div>
-          <label htmlFor="eventType">Event Type:</label>
-          <select id="eventType" name="eventType" value={formData.eventType} onChange={handleChange}>
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        </div>
-        {formError && <p style={{ color: "red" }}>{formError}</p>}
-        <button type="submit" disabled={uploading}>
-          Submit
-        </button>
-      </form>
-      {uploading && <p>Uploading Image...</p>}
-    </div>
-  );
+				</div>
+				<div>
+					<label htmlFor="location">Location:</label>
+					<input
+						type="text"
+						id="location"
+						name="location"
+						value={formData.location}
+						onChange={handleChange}
+					/>
+				</div>
+				<div>
+					<label htmlFor="description">Description:</label>
+					<textarea
+						id="description"
+						name="description"
+						value={formData.description}
+						onChange={handleChange}
+					/>
+				</div>
+				<div>
+					<label htmlFor="eventName">Event Name:</label>
+					<input
+						type="text"
+						id="eventName"
+						name="eventName"
+						value={formData.eventName}
+						onChange={handleChange}
+					/>
+				</div>
+				<div>
+					<label htmlFor="host">Host:</label>
+					<input
+						type="text"
+						id="host"
+						name="host"
+						value={formData.host}
+						onChange={handleChange}
+					/>
+				</div>
+				<div>
+					<label htmlFor="image">Image:</label>
+					<input
+						type="file"
+						id="image"
+						name="image"
+						onChange={(e) => {
+							const file = e.target.files ? e.target.files[0] : null;
+							setImageFile(file);
+						}}
+					/>
+				</div>
+				<div>
+					<label htmlFor="eventType">Event Type:</label>
+					<select
+						id="eventType"
+						name="eventType"
+						value={formData.eventType}
+						onChange={handleChange}>
+						<option value="public">Public</option>
+						<option value="private">Private</option>
+					</select>
+				</div>
+				{formError && <p style={{ color: "red" }}>{formError}</p>}
+				<button type="submit" disabled={uploading}>
+					Submit
+				</button>
+			</form>
+			{uploading && <p>Uploading Image...</p>}
+		</div>
+	);
 };
 
 export default EventForm;
