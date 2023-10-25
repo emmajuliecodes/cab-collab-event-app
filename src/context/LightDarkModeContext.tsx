@@ -1,6 +1,10 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { LightDarkModeContextType } from "../@types";
 
+interface LightDarkModeProviderProps {
+	children: ReactNode;
+}
+
 const LightDarkModeContext = createContext<
 	LightDarkModeContextType | undefined
 >(undefined);
@@ -16,41 +20,19 @@ export function useLightDarkMode() {
 	return context;
 }
 
-interface LightDarkModeProviderProps {
-	children: ReactNode;
-}
-
 export function LightDarkModeProvider({
 	children,
 }: LightDarkModeProviderProps) {
-	const [isDarkMode, setIsDarkMode] = useState(false);
+	const [isLightMode, setIsLightMode] = useState(false);
 
 	const toggleMode = () => {
-		const newMode = !isDarkMode;
-		setIsDarkMode(newMode);
-
-		// Update CSS variables based on the mode
-		document.documentElement.style.setProperty(
-			"--background-light",
-			newMode ? "black" : "white"
-		);
-		document.documentElement.style.setProperty(
-			"--background-dark",
-			newMode ? "white" : "black"
-		);
-		document.documentElement.style.setProperty(
-			"--text-light",
-			newMode ? "white" : "black"
-		);
-		document.documentElement.style.setProperty(
-			"--text-dark",
-			newMode ? "black" : "white"
-		);
+		const newMode = !isLightMode;
+		setIsLightMode(newMode);
 	};
 
 	return (
-		<LightDarkModeContext.Provider value={{ isDarkMode, toggleMode }}>
-			<div className={isDarkMode ? "dark" : "light"}>{children}</div>
+		<LightDarkModeContext.Provider value={{ isLightMode, toggleMode }}>
+			<div className={isLightMode ? "light" : "dark"}>{children}</div>
 		</LightDarkModeContext.Provider>
 	);
 }
