@@ -1,22 +1,47 @@
 import { createContext, useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { type User, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  // updateDoc,
+  // doc,
+} from "firebase/firestore";
 import { auth, db } from "../firebase/FirebaseConfig";
 import { toast } from "react-toastify";
 
+export interface UserProfileData {
+  name: string;
+  phone: string;
+  email: string;
+  city: string;
+  myEvents: string[];
+  attending: string[];
+  declined: string[];
+  invites: string[];
+  uid: string;
+}
+
 interface ContextType {
   user: User | null;
+  userData?: UserProfileData;
+  getUserProfileByUID: (uid: string) => Promise<void>;
   handleLogin: (e: FormEvent<HTMLFormElement>, email: string, password: string) => void;
   logout: () => void;
-  handleRegister: (e: FormEvent<HTMLFormElement>, email: string, password: string, name: string, avatar: string) => void;
-  // handleUpdate: (e: FormEvent<HTMLFormElement>, name: string) => void;
+  handleRegister: (e: FormEvent<HTMLFormElement>, name: string, email: string, password: string) => void;
   isChecked: boolean;
 }
 
 const defaultValue: ContextType = {
   user: null,
+  userData: undefined,
   handleLogin: () => {
+    throw Error("No provider");
+  },
+  getUserProfileByUID: () => {
     throw Error("No provider");
   },
   logout: () => {
@@ -25,7 +50,6 @@ const defaultValue: ContextType = {
   handleRegister: () => {
     throw Error("No provider");
   },
-
   isChecked: false,
 };
 
@@ -37,6 +61,7 @@ interface Props {
 
 export const AuthContextProvider = (props: Props) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserProfileData | undefined>(undefined);
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
@@ -52,7 +77,7 @@ export const AuthContextProvider = (props: Props) => {
       });
   };
 
-  const handleRegister = (e: FormEvent<HTMLFormElement>, email: string, password: string, name: string, avatar: string) => {
+  const handleRegister = (e: FormEvent<HTMLFormElement>, name: string, email: string, password: string) => {
     e.preventDefault();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -61,25 +86,20 @@ export const AuthContextProvider = (props: Props) => {
         setUser(user);
         console.log("new user", user);
 
-        const uid = user.uid;
-
-        // const storage = getStorage();
-        // const avatarRef = ref(storage, "images/" + imageFile.name);
-
+        toast.success("Success, you are registered");
         addDoc(collection(db, "users"), {
           email: user.email,
-          uid: uid,
-          name,
-          avatar: avatar || "default-avatar-url",
+          uid: user.uid,
+          name: name,
+          city: "",
+          phone: "",
+          myEvents: [""],
+          invites: [""],
+          declined: [""],
+          attending: [""],
         });
 
-        // const updateUser = doc(db, "users", "id");
-
-        // updateDoc(updateUser, {
-        // 	name,
-        // });
-
-        toast.success("Success, you are registered");
+        navigate("/");
       })
       .catch((error) => {
         // const errorCode = error.code;
@@ -107,32 +127,37 @@ export const AuthContextProvider = (props: Props) => {
       });
   };
 
-  const checkActiveUser = () => {
-    onAuthStateChanged(auth, async (user) => {
+  const checkActiveUser = async () => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          // Here, you can merge the auth user data and Firestore user data
-          // and set it to your state/context.
-          const fullUserData = {
-            ...user,
-            ...userDoc.data(),
-          };
-          setUser(fullUserData);
-        } else {
-          setUser(user);
-        }
+        setUser(user);
       } else {
         setUser(null);
       }
       setIsChecked(true);
     });
   };
+  //TODO: Find out why the func is not assigning user profile details to the userData setState
+  const getUserProfileByUID = async (uid: string) => {
+    try {
+      const usersCollection = collection(db, "users");
+      const q = query(usersCollection, where("uid", "==", uid));
+      const querySnapshot = await getDocs(q);
+      // Assuming there's only one document with the same UID
+      const userDoc = querySnapshot.docs[0];
+      const userData = userDoc.data();
+      console.log("data1", userData);
+      setUserData(userData as UserProfileData);
+    } catch (error) {
+      console.error("Error finding user by UID:", error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
     checkActiveUser();
+    if (user) getUserProfileByUID(user.uid);
+    console.log("d2", userData);
   }, []);
 
   return (
@@ -140,9 +165,10 @@ export const AuthContextProvider = (props: Props) => {
       value={{
         user,
         handleLogin,
+        userData,
+        getUserProfileByUID,
         logout,
         handleRegister,
-
         isChecked,
       }}
     >
