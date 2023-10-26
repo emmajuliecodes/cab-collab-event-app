@@ -9,6 +9,8 @@ import {
   getDocs,
   query,
   where,
+  setDoc,
+  doc,
   // updateDoc,
   // doc,
 
@@ -108,7 +110,7 @@ export const AuthContextProvider = (props: Props) => {
           attending: [],
         };
 
-        addDoc(collection(db, "users"), data);
+        setDoc(doc(db, "users", user.uid), data);
         setUserData(data);
 
         navigate("/");

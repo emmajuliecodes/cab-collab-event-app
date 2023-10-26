@@ -3,7 +3,6 @@ export interface NotOk {
 }
 
 export interface UserProfileData {
-
 	name: string;
 	phone: string;
 	email: string;
@@ -18,7 +17,8 @@ export interface UserProfileData {
 
 export interface Event {
   date: string;
-  time: string;
+  endTime: string;
+  startTime: string;
   eventType: string;
   attendees: Array[];
   invitees: Array[];
