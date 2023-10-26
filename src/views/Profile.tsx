@@ -58,7 +58,7 @@ const UserProfile = () => {
     })
     
     // function from authContext to refresh user & userData with fresh database results
-    // this also triggers the fetchInvites useEffect to run again, updating all arrays with new values
+    // updating those states then triggers the fetchInvites useEffect to run again, updating all arrays with new values
     checkActiveUser();
 	};
 
@@ -87,6 +87,7 @@ const UserProfile = () => {
     </div>
 
 			<h2>Pending Invites</h2>
+      {/* pending invites will have buttons to accept/decline */}
 			<ProfileEventCards events={invites} pending={true} handleResponse={handleResponse} />
 
 			<h2>Accepted Invites</h2>
