@@ -1,6 +1,6 @@
 import { db } from "../firebase/FirebaseConfig";
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
-import { Event, User } from "../@types";
+import { Event, UserProfileData } from "../@types";
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -49,7 +49,7 @@ function EventsListView() {
 type EventListItemProps = { event: Event & { id: string } };
 
 const EventListItem: React.FC<EventListItemProps> = ({ event }) => {
-	const [userData, setUserData] = useState<User | null>(null);
+	const [userData, setUserData] = useState<UserProfileData | null>(null);
 	useEffect(() => {
 		const fetchUserById = async () => {
 			const creatorUserId = event.creator_id as string;
@@ -59,7 +59,7 @@ const EventListItem: React.FC<EventListItemProps> = ({ event }) => {
 
 			if (docSnap.exists()) {
 				console.log("doc data", docSnap.data());
-				const data = docSnap.data() as User;
+				const data = docSnap.data() as UserProfileData;
 				setUserData(data);
 			} else {
 				// setError("Something went wrong :( ");

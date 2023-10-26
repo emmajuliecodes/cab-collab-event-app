@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { LightDarkModeContextType } from "../@types";
+// import ink from "../assets/videos/ink.mp4";
+// import spacewave from "../assets/videos/spacewave.mp4";
 
 interface LightDarkModeProviderProps {
 	children: ReactNode;
 }
 
-const LightDarkModeContext = createContext<
+export const LightDarkModeContext = createContext<
 	LightDarkModeContextType | undefined
 >(undefined);
 

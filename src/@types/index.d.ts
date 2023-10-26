@@ -36,7 +36,7 @@ export interface Event {
 }
 
 export interface LightDarkModeContextType {
-	isDarkMode: boolean;
+	isLightMode: boolean;
 	toggleMode: () => void;
 }
 

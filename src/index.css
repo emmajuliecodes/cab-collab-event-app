@@ -37,6 +37,7 @@ button {
 	padding: 0.4em 0.4em;
 	margin-right: 0.25em;
 	margin-left: 0.25em;
+	margin-top: 10px;
 	box-shadow: 3px 3px 10px #bb72a8;
 	font-size: 1em;
 	font-weight: 500;
@@ -69,7 +70,7 @@ button:hover {
 
 .light {
 	color: #000000;
-	background-color: #ffffff;
+	/* background-color: #ffffff; */
 }
 
 .dark {
@@ -78,6 +79,9 @@ button:hover {
 }
 
 .nav {
+	/* position: sticky;
+	z-index: 100;
+	transition: background-color 0.3s ease; */
 	margin-top: 20px;
 	height: 50px;
 	display: flex;
@@ -90,4 +94,24 @@ button:hover {
 	justify-content: space-evenly;
 	padding: 1em;
 	margin-top: 50px;
+}
+
+.FormContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 300px;
+	margin: 0 auto;
+}
+
+.InputField {
+	margin: 10px;
+	padding: 6px;
+	width: 10em;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.label {
+	color: #6245d5;
 }
