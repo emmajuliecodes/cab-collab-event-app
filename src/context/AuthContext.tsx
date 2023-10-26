@@ -3,9 +3,7 @@ import { createContext, useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { type User, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "firebase/auth";
 import {
-
   collection,
-  addDoc,
   getDocs,
   query,
   where,
@@ -29,7 +27,7 @@ interface ContextType {
   handleLogin: (e: FormEvent<HTMLFormElement>, email: string, password: string) => void;
   logout: () => void;
   handleRegister: (e: FormEvent<HTMLFormElement>, name: string, email: string, password: string) => void;
-
+  checkActiveUser: () => void;
   isChecked: boolean;
 }
 
@@ -37,10 +35,8 @@ const defaultValue: ContextType = {
   user: null,
   userData: undefined,
   handleLogin: () => {
-
     throw Error("No provider");
   },
-
   logout: () => {
     throw Error("No provider");
   },
@@ -48,7 +44,9 @@ const defaultValue: ContextType = {
     throw Error("No provider");
   },
   isChecked: false,
-
+  checkActiveUser: () => {
+    throw Error("No provider");
+  }
 };
 
 export const AuthContext = createContext(defaultValue);
@@ -225,11 +223,9 @@ export const AuthContextProvider = (props: Props) => {
         logout,
         handleRegister,
         isChecked,
-
+        checkActiveUser
       }}>
       {props.children}
     </AuthContext.Provider>
   );
-
-
 };

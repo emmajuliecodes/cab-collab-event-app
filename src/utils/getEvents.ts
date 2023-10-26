@@ -1,5 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/FirebaseConfig";
+import { Event } from "../@types";
 
 async function getEvents(array: string[]): Promise<Event[]> {
   const events = await Promise.allSettled(
@@ -8,6 +9,7 @@ async function getEvents(array: string[]): Promise<Event[]> {
       const eventDoc = await getDoc(eventDocRef);
       if (eventDoc.exists()) {
         const result = eventDoc.data() as Event;
+        result.id = eventDoc.id;
         return result;
       }
       return null;
