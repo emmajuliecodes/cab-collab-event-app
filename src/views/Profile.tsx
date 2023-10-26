@@ -7,31 +7,35 @@ import getEvents from "../utils/getEvents";
 
 const UserProfile = () => {
   const { user, userData } = useContext(AuthContext);
-  const [eventDetails, setEventDetails] = useState<Event[]>([]); // Store event details
-  const [invites, setInvites] = useState<Event[]>([]);
+  const [pendingInvites, setPendingInvites] = useState<Event[]>([]);
   const [acceptedInvites, setAcceptedInvites] = useState<Event[]>([]);
   const [declinedInvites, setDeclinedInvites] = useState<Event[]>([]);
 
   useEffect(() => {
-    // Fetch the user's pending invites when the component mounts
     const fetchUserInvites = async () => {
       console.log("fetchUserInvites is called");
 
-      if (!user && !userData) {
+      if (!user || !userData) {
         console.log("No user found");
         return;
       }
-      if (userData) {
-        try {
-          const events1 = await getEvents(userData.myEvents);
-          setEventDetails(events1);
-          const events2 = await getEvents(userData.attending);
-          setAcceptedInvites(events2);
-          const events3 = await getEvents(userData.declined);
-          setDeclinedInvites(events3);
-        } catch (error) {
-          console.error("Error fetching user document:", error);
-        }
+
+      console.log("Current userData:", userData);
+
+      try {
+        const pendingEvents = await getEvents(userData.pendingInvites);
+        console.log("Pending Events:", pendingEvents);
+        setPendingInvites(pendingEvents);
+
+        const events2 = await getEvents(userData.attending);
+        console.log("Attending Events:", events2);
+        setAcceptedInvites(events2);
+
+        const events3 = await getEvents(userData.declined);
+        console.log("Declined Events:", events3);
+        setDeclinedInvites(events3);
+      } catch (error) {
+        console.error("Error fetching user document:", error);
       }
     };
 
@@ -86,7 +90,7 @@ const UserProfile = () => {
   return (
     <div>
       <h2>Pending Invites</h2>
-      {eventDetails.map((event) => (
+      {pendingInvites.map((event) => (
         <div key={event.id}>
           <h3>{event.eventName}</h3>
           <p>Date: {event.date}</p>

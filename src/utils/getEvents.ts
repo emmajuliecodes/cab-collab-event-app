@@ -2,6 +2,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/FirebaseConfig";
 
 async function getEvents(array: string[]): Promise<Event[]> {
+  console.log("Fetching events for IDs:", array);
+
   const events = await Promise.allSettled(
     array.map(async (eventId) => {
       const eventDocRef = doc(db, "events", eventId);
@@ -20,6 +22,7 @@ async function getEvents(array: string[]): Promise<Event[]> {
     .map((eventResult) => eventResult.value)
     .filter((event): event is Event => event !== null);
 
+  console.log("Fetched events:", result);
   return result;
 }
 
