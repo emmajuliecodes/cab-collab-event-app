@@ -7,15 +7,7 @@ import {
   signOut,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  // updateDoc,
-  // doc,
-} from 'firebase/firestore';
+import {collection, addDoc, getDocs, query, where} from 'firebase/firestore';
 import {auth, db} from '../firebase/FirebaseConfig';
 import {toast} from 'react-toastify';
 import {UserProfileData} from '../@types';
@@ -94,7 +86,6 @@ export const AuthContextProvider = (props: Props) => {
     e.preventDefault();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
         setUser(user);
         console.log('new user', user);
@@ -117,8 +108,6 @@ export const AuthContextProvider = (props: Props) => {
         navigate('/');
       })
       .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
         console.log(error);
       });
   };
@@ -152,8 +141,6 @@ export const AuthContextProvider = (props: Props) => {
         // ...
       })
       .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
         console.log(error);
       });
   };
@@ -170,7 +157,6 @@ export const AuthContextProvider = (props: Props) => {
     });
   };
 
-  //TODO: Find out why the func is not assigning user profile details to the userData setState
   const getUserProfileByUID = (uid: string) => {
     const q = query(collection(db, 'users'), where('uid', '==', uid));
     getDocs(q).then((querySnapshot) => {
@@ -182,29 +168,11 @@ export const AuthContextProvider = (props: Props) => {
       });
       setUserData(uData[0]);
     });
-
-    // try {
-    //   if (user) {
-    //     const usersCollection = collection(db, 'users');
-    //     const q = query(usersCollection, where('uid', '==', uid));
-    //     const querySnapshot = await getDocs(q);
-    //     const userDoc = querySnapshot.docs[0];
-    //     const userData = userDoc.data();
-    //     setUserData(userData as UserProfileData);
-    //   }
-    // } catch (error) {
-    //   console.error('Error finding user by UID:', error);
-    //   throw error;
-    // }
   };
 
   useEffect(() => {
     checkActiveUser();
   }, []);
-
-  // useEffect(() => {
-  //   getUserProfileByUID();
-  // }, [user]);
 
   return (
     <AuthContext.Provider
