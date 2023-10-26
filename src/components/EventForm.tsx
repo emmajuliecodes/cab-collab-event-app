@@ -7,7 +7,7 @@ import {
 	uploadBytesResumable,
 	getDownloadURL,
 } from "firebase/storage";
-import { FirebaseUser, UsersContext } from "../context/UsersContext";
+
 import {} from "firebase/database";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
@@ -18,186 +18,161 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const EventForm: React.FC = () => {
-	const [formData, setFormData] = useState({
-		date: "",
-		startTime: "",
-		endTime: "",
-		invitees: "",
-		location: "",
-		description: "",
-		eventName: "",
-		host: "",
-		image: "",
-		eventType: "public",
-	});
 
-	const { getAllUsers, users } = useContext(UsersContext);
-	const [selectedUsers, setSelectedUsers] = useState<FirebaseUser[]>([]);
-	const [imageFile, setImageFile] = useState<File | null>(null);
-	const [formError, setFormError] = useState<string | null>(null);
-	const [uploading, setUploading] = useState(false);
+  const [formData, setFormData] = useState({
+    date: "",
+    startTime: "",
+    endTime: "",
+    invitees: "",
+    location: "",
+    description: "",
+    eventName: "",
+    host: "",
+    image: "",
+    eventType: "public",
+  });
 
-	const handleChange = (
-		e: React.ChangeEvent<
-			HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-		>
-	) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-		setFormError(null);
-	};
+  const { getAllUsers, users } = useContext(UsersContext);
+  const [selectedUsers, setSelectedUsers] = useState<FirebaseUser[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-	const uploadImageAndGetURL = async () => {
-		if (!imageFile) return null;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormError(null);
+  };
 
-		const storage = getStorage();
-		const storageRef = ref(storage, "images/" + imageFile.name);
-		const uploadTask = uploadBytesResumable(storageRef, imageFile);
+  const uploadImageAndGetURL = async () => {
+    if (!imageFile) return null;
 
-		return new Promise<string | null>((resolve, reject) => {
-			uploadTask.on(
-				"state_changed",
-				() => {},
-				(error) => reject(error),
-				async () => {
-					const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-					resolve(downloadURL);
-				}
-			);
-		});
-	};
+    const storage = getStorage();
+    const storageRef = ref(storage, "images/" + imageFile.name);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-	const startEndLogic = (startingTime: Date, endingTime: Date): void => {
-		if (startingTime >= endingTime) {
-			setFormError("End time must be later than start time");
-			setUploading(false);
-		}
-	};
+    return new Promise<string | null>((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        () => {},
+        (error) => reject(error),
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
+  };
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+  const startEndLogic = (startingTime: Date, endingTime: Date): void => {
+    if (startingTime >= endingTime) {
+      setFormError("End time must be later than start time");
+      setUploading(false);
+    }
+  };
 
-		const startTime = new Date(`1970-01-01T${formData.startTime}Z`);
-		const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
-		startEndLogic(startTime, endTime);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-		let imageUrl = "";
-		if (imageFile) {
-			// Only attempt to upload if there's an image file
-			setUploading(true);
-			imageUrl = (await uploadImageAndGetURL()) || "";
-			setUploading(false);
-		}
+    const startTime = new Date(`1970-01-01T${formData.startTime}Z`);
+    const endTime = new Date(`1970-01-01T${formData.endTime}Z`);
+    startEndLogic(startTime, endTime);
 
-		try {
-			const newEvent = { ...formData, image: imageUrl };
-			const docRef = await addDoc(collection(db, "events"), newEvent);
+    let imageUrl = "";
+    if (imageFile) {
+      setUploading(true);
+      imageUrl = (await uploadImageAndGetURL()) || "";
+      setUploading(false);
+    }
 
-			// Update each selected user's 'pendingInvites' with the new event's ID.
-			for (const user of selectedUsers) {
-				const userDoc = doc(db, "users", user.id);
-				const userSnapshot = await getDoc(userDoc);
-				if (userSnapshot.exists()) {
-					const userData = userSnapshot.data() as FirebaseUser;
-					const currentPendingInvites = userData.pendingInvites || []; // Default to an empty array if undefined
-					const updatedPendingInvites = [...currentPendingInvites, docRef.id];
-					await updateDoc(userDoc, { pendingInvites: updatedPendingInvites });
-				}
-			}
+    const inviteeIds = selectedUsers.map((user) => user.id);
 
-			console.log("Document written with ID: ", docRef.id);
+    try {
+      const newEvent = {
+        ...formData,
+        invitees: inviteeIds, // Set the invitees field with the IDs
+        image: imageUrl,
+      };
+      const docRef = await addDoc(collection(db, "events"), newEvent);
 
-			setFormData({
-				date: "",
-				startTime: "",
-				endTime: "",
-				invitees: "",
-				location: "",
-				description: "",
-				eventName: "",
-				host: "",
-				image: "",
-				eventType: "public",
-			});
-			setImageFile(null);
-			setFormError(null);
-		} catch (error) {
-			console.error("Error: ", error);
-			setFormError("Error submitting form. Try again later.");
-		}
-	};
+      // Update each selected user's 'pendingInvites' with the new event's ID.
+      for (const user of selectedUsers) {
+        const userDoc = doc(db, "users", user.id);
+        const userSnapshot = await getDoc(userDoc);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data() as FirebaseUser;
+          const currentPendingInvites = userData.pendingInvites || []; // Default to an empty array if undefined
+          const updatedPendingInvites = [...currentPendingInvites, docRef.id];
+          await updateDoc(userDoc, { pendingInvites: updatedPendingInvites });
+        }
+      }
 
-	useEffect(() => {
-		getAllUsers();
-		console.log("selected", selectedUsers);
-	}, [selectedUsers]);
+      console.log("Document written with ID: ", docRef.id);
 
-	return (
-		<div className="modal">
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor="date">Date:</label>
-					<input
-						type="date"
-						id="date"
-						name="date"
-						value={formData.date}
-						onChange={handleChange}
-					/>
-				</div>
-				<div>
-					<label htmlFor="startTime">Start Time:</label>
-					<input
-						type="time"
-						id="startTime"
-						name="startTime"
-						value={formData.startTime}
-						onChange={handleChange}
-					/>
-				</div>
+      setFormData({
+        date: "",
+        startTime: "",
+        endTime: "",
+        invitees: "",
+        location: "",
+        description: "",
+        eventName: "",
+        host: "",
+        image: "",
+        eventType: "public",
+      });
+      setImageFile(null);
+      setFormError(null);
+    } catch (error) {
+      console.error("Error: ", error);
+      setFormError("Error submitting form. Try again later.");
+    }
+  };
 
-				<div>
-					<label htmlFor="endTime">End Time:</label>
-					<input
-						type="time"
-						id="endTime"
-						name="endTime"
-						value={formData.endTime}
-						onChange={handleChange}
-					/>
-				</div>
-				<div>
-					<Autocomplete
-						multiple
-						id="invitees-emails"
-						options={users || []}
-						value={selectedUsers}
-						onChange={(e, newValue) => {
-							setSelectedUsers(newValue);
-						}}
-						disableCloseOnSelect
-						getOptionLabel={(option) => option.email}
-						renderOption={(props, option, { selected }) => (
-							<li {...props}>
-								<Checkbox
-									icon={icon}
-									checkedIcon={checkedIcon}
-									style={{ marginRight: 8 }}
-									checked={selected}
-								/>
-								{option.email}
-							</li>
-						)}
-						style={{ width: 500 }}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								label="Invitees"
-								placeholder="Search by email"
-							/>
-						)}
-					/>
-					{/* <label htmlFor="invitees">Invitees:</label>
+  useEffect(() => {
+    getAllUsers();
+    console.log("selected", selectedUsers);
+  }, [selectedUsers]);
+
+  return (
+    <div className="modal">
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="date">Date:</label>
+          <input type="date" id="date" name="date" value={formData.date} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="startTime">Start Time:</label>
+          <input type="time" id="startTime" name="startTime" value={formData.startTime} onChange={handleChange} />
+        </div>
+
+        <div>
+          <label htmlFor="endTime">End Time:</label>
+          <input type="time" id="endTime" name="endTime" value={formData.endTime} onChange={handleChange} />
+        </div>
+        <div>
+          <Autocomplete
+            multiple
+            id="invitees-emails"
+            options={users || []}
+            value={selectedUsers}
+            onChange={(e, newValue) => {
+              setSelectedUsers(newValue);
+            }}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option.email}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
+                <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.email}
+              </li>
+            )}
+            style={{ width: 500 }}
+            renderInput={(params) => <TextField {...params} label="Invitees" placeholder="Search by email" />}
+          />
+          {/* <label htmlFor="invitees">Invitees:</label>
+
           <input type="text" id="invitees" name="invitees" value={formData.invitees} onChange={handleChange} /> */}
 				</div>
 				<div>

@@ -44,11 +44,8 @@ function VisitorEventView() {
   useEffect(() => {
     fetchByCity().catch((e) => console.log(e));
   }, [fetchByCity]);
-
   return (
     <>
-      <h1>Events</h1>
-
       <div className='search-bar'>
         <input
           type='text'

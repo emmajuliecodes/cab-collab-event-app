@@ -9,10 +9,15 @@ import spacewave from "../assets/videos/spacewave.mp4";
 function App() {
 	const redirect = useNavigate();
 	return (
-		<>
-
-			<br></br>
-
+		<div
+			style={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				flexDirection: "column",
+				width: "100vw",
+				height: "100vh",
+			}}>
 			<h1>EventSpace</h1>
 			<h2>Much better than Facebook events...</h2>
 			<br></br>
@@ -26,8 +31,8 @@ function App() {
 				style={{
 					position: "absolute",
 					top: 0,
-					zIndex: -50,
-					height: "100vh",
+					zIndex: -10,
+					height: "100%",
 					width: "100vw ",
 					display: "flex",
 					justifyContent: "center",
@@ -48,7 +53,7 @@ function App() {
 					{/* <source src={ink} type="video/mp4" /> */}
 				</video>
 			</div>
-		</>
+		</div>
 	);
 }
 
