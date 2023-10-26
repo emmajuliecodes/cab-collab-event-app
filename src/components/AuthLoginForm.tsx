@@ -2,6 +2,7 @@ import {useState, type FormEvent} from 'react';
 
 type Props = {
   title: string;
+
   handleSubmit: (
     e: FormEvent<HTMLFormElement>,
     email: string,
@@ -13,11 +14,13 @@ const AuthLoginForm = ({title, handleSubmit}: Props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+
   // const changeHandler = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   return (
     <div>
       <h1>{title}</h1>
       <form onSubmit={(e) => handleSubmit(e, email, password)}>
+
         <label htmlFor='email'>Email</label>
         <input
           placeholder='add your email'
@@ -35,6 +38,7 @@ const AuthLoginForm = ({title, handleSubmit}: Props) => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type='submit'>{title}</button>
+
       </form>
     </div>
   );

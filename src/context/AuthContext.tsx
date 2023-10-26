@@ -1,6 +1,7 @@
 import {createContext, useState, useEffect, type FormEvent} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {
+
   type User,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -45,6 +46,7 @@ const defaultValue: ContextType = {
     throw Error('No provider');
   },
   isChecked: false,
+
 };
 
 export const AuthContext = createContext(defaultValue);
@@ -54,6 +56,7 @@ interface Props {
 }
 
 export const AuthContextProvider = (props: Props) => {
+
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserProfileData | undefined>(
     undefined
@@ -187,4 +190,5 @@ export const AuthContextProvider = (props: Props) => {
       {props.children}
     </AuthContext.Provider>
   );
+
 };

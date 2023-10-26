@@ -7,73 +7,86 @@ import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {createBrowserRouter, RouterProvider, Outlet} from 'react-router-dom';
 
-import {AuthContextProvider} from './context/AuthContext.tsx';
-import Error404 from './views/Error404.tsx';
-import Home from './views/Home.tsx';
-import FilterByCity from './views/About.tsx';
-import Login from './views/Login.tsx';
-import EventsListView from './views/EventsListView.tsx';
-import UserProfile from './views/Profile.tsx';
-import WithNav from './components/Layouts/WithNav.tsx';
-import EventDetailView from './views/EventDetailView.tsx';
-import WithFooter from './components/Layouts/Footer/WithFooter.tsx';
-import Register from './views/Register.tsx';
-import EventModal from './components/EventModal.tsx';
+
+import { AuthContextProvider } from "./context/AuthContext.tsx";
+import Error404 from "./views/Error404.tsx";
+import Home from "./views/Home.tsx";
+import FilterByCity from "./views/About.tsx";
+import Login from "./views/Login.tsx";
+import EventsListView from "./views/EventsListView.tsx";
+import UserProfile from "./views/Profile.tsx";
+import WithNav from "./components/Layouts/WithNav.tsx";
+import EventDetailView from "./views/EventDetailView.tsx";
+
+import Register from "./views/Register.tsx";
+import { UsersContextProvider } from "./context/UsersContext.tsx";
+import EventForm from "./components/EventForm.tsx";
+
+import TestingPage from "./views/Testing.tsx";
 
 const router = createBrowserRouter([
-  {
-    element: (
-      <AuthContextProvider>
-        <Outlet />
-      </AuthContextProvider>
-    ),
-    // // putting context at outermost layer of router means it still wraps every route, but is also inside the router and can then use react router dom hooks like useNavigate
-    children: [
-      {
-        element: (
-          <>
-            <WithNav>
-              <Outlet />
-            </WithNav>
-            <WithFooter />
-          </>
-        ),
-        children: [
-          {
-            path: '/',
-            element: <Home />,
-          },
-          {
-            path: '/events',
-            element: <EventsListView />,
-          },
-          {
-            path: '/login',
-            element: <Login />,
-          },
-          {
-            path: '/eventById/:id',
-            element: <EventDetailView />,
-          },
+	{
+		element: (
+			<AuthContextProvider>
+				<Outlet />
+			</AuthContextProvider>
+		),
+		// // putting context at outermost layer of router means it still wraps every route, but is also inside the router and can then use react router dom hooks like useNavigate
+		children: [
+			{
+				element: (
+					<>
+						<WithNav>
+							<Outlet />
+						</WithNav>
+					</>
+				),
+				children: [
+					{
+						path: "/",
+						element: <Home />,
+					},
+					{
+						path: "/events",
+						element: <EventsListView />,
+					},
+					{
+						path: "/login",
+						element: <Login />,
+					},
+					{
+						path: "/eventById/:id",
+						element: <EventDetailView />,
+					},
 
-          {
-            path: '/about',
-            element: <FilterByCity />,
-          },
-          {
-            path: '/profile',
-            element: <UserProfile />,
-          },
-          {
-            path: '/register',
-            element: <Register />,
-          },
-          {
-            path: '/listevent',
-            element: <EventModal />,
-          },
-        ],
-      },
+					{
+						path: "/about",
+						element: <FilterByCity />,
+					},
+					{
+						path: "/profile",
+						element: <UserProfile />,
+					},
+					{
+						path: "/register",
+						element: <Register />,
+					},
+
+					{
+						path: "/testing",
+						element: <TestingPage />,
+					},
+					{
+						path: "/listevent",
+						element: (
+							<UsersContextProvider>
+								<EventForm />
+							</UsersContextProvider>
+						),
+					},
+				],
+			},
+
 
       {
         path: '*',
