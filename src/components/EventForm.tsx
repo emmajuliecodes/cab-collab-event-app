@@ -17,6 +17,7 @@ import {} from "firebase/database";
 // import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { UserProfileData } from "../@types";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 // const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 // const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -45,14 +46,14 @@ const EventForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const uploadImageAndGetURL = async (imageFile: File) => {
+  const uploadImageAndGetURL = async (imageFile: File | null) => {
+    if (!imageFile) return "https://firebasestorage.googleapis.com/v0/b/cab-collab-event-app.appspot.com/o/images%2Fplaceholder.png?alt=media"
     const storage = getStorage();
     const storageRef = ref(storage, "images/" + imageFile.name);
     try {
       await uploadBytes(storageRef, imageFile);
       const url = await getDownloadURL(storageRef);
-      console.log(url);
-      return url ? url : "https://firebasestorage.googleapis.com/v0/b/cab-collab-event-app.appspot.com/o/images%2Fplaceholder.png?alt=media"
+      return url
     } catch (e) {
       console.log(e);
       return "https://firebasestorage.googleapis.com/v0/b/cab-collab-event-app.appspot.com/o/images%2Fplaceholder.png?alt=media"
@@ -91,7 +92,7 @@ const EventForm: React.FC = () => {
     if (!validTimes) return;
 
     setUploading(true);
-    const imageUrl = imageFile ? await uploadImageAndGetURL(imageFile) : "https://firebasestorage.googleapis.com/v0/b/cab-collab-event-app.appspot.com/o/images%2Fplaceholder.png?alt=media"
+    const imageUrl = await uploadImageAndGetURL(imageFile)
     setUploading(false);
 
     try {
@@ -143,9 +144,11 @@ const EventForm: React.FC = () => {
       allCheckboxes.forEach((cb) => cb.checked = false);
       setImageFile(null);
       setFormError("");
+      toast.success("Success, you created an event!");
     } catch (error) {
       console.error("Error: ", error);
       setFormError("Error submitting form. Try again later.");
+      toast.error("Something went wrong... Try again?")
     }
   };
 
