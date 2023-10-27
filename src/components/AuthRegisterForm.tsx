@@ -17,10 +17,10 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 
 	return (
 		<div className="FormContainer">
-			<h1>{title}</h1>
+			<h2>{title}</h2>
 			<form onSubmit={(e) => handleSubmit(e, name, email, password)}>
 				<label htmlFor="name" className="label">
-					Name
+					Name:
 				</label>
 				<br></br>
 				<input
@@ -34,7 +34,7 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 				<br></br>
 
 				<label htmlFor="email" className="label">
-					Email
+					Email:
 				</label>
 				<br></br>
 				<input
@@ -47,7 +47,7 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 				/>
 				<br></br>
 				<label htmlFor="password" className="label">
-					Password
+					Password:
 				</label>
 				<br></br>
 				<input
@@ -59,7 +59,9 @@ const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 					className="InputField"
 				/>
 				<br></br>
-				<button type="submit">{title}</button>
+				<button type="submit" className="submitButton">
+					{title}
+				</button>
 			</form>
 		</div>
 	);

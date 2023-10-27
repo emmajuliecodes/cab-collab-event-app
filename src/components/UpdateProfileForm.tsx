@@ -1,8 +1,6 @@
-
 // import { useState, type FormEvent } from "react";
 
 // // import { collection } from "firebase/firestore";
-
 
 // type Props = {
 // 	title: string;
