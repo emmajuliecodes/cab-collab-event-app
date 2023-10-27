@@ -1,19 +1,16 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { LightDarkModeContextType } from "../@types";
 
-// import ink from "../assets/videos/ink.mp4";
-// import spacewave from "../assets/videos/spacewave.mp4";
-
-// interface LightDarkModeProviderProps {
-// 	children: ReactNode;
-// }
+interface LightDarkModeProviderProps {
+	children: ReactNode;
+}
 
 export const LightDarkModeContext = createContext<
 	LightDarkModeContextType | undefined
 >(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function LightDarkMode() {
+export function useLightDarkMode() {
 	const context = useContext(LightDarkModeContext);
 	if (!context) {
 		throw new Error(
@@ -23,27 +20,19 @@ export function LightDarkMode() {
 	return context;
 }
 
-export const LightDarkModeProvider: React.FC<{
-	children: ReactNode;
-}> = ({ children }) => {
-	const [isLightMode, setIsLightMode] = useState<boolean>(false);
+export function LightDarkModeProvider({
+	children,
+}: LightDarkModeProviderProps) {
+	const [isLightMode, setIsLightMode] = useState(false);
 
 	const toggleMode = () => {
-		setIsLightMode((prev) => !prev);
+		const newMode = !isLightMode;
+		setIsLightMode(newMode);
 	};
 
 	return (
 		<LightDarkModeContext.Provider value={{ isLightMode, toggleMode }}>
-			{children}
+			<div className={isLightMode ? "light" : "dark"}>{children}</div>
 		</LightDarkModeContext.Provider>
 	);
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useLightDarkMode = () => {
-	const context = useContext(LightDarkModeContext);
-	if (context === undefined) {
-		throw new Error("useLightDarkMode must be used within a ThemeProvider");
-	}
-	return context;
-};
+}

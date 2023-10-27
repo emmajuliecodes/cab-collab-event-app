@@ -3,13 +3,13 @@
 :root {
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 	line-height: 1;
-	font-weight: 300;
+	font-weight: 400;
 	text-align: center;
 
-	/* color-scheme: light dark; */
-	/* 
+	color-scheme: dark light;
 	--background-light: url("ink.mp4");
-	--background-dark: url("spacewave.mp4"); */
+	--background-dark: url("spacewave.mp4");
+	/* /* color: rgba(255, 255, 255, 0.87); */
 
 	/* font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -20,12 +20,12 @@
 
 .light {
 	color: #000000;
-	background: var(--background-light);
+	background-color: #ffffff;
 }
 
 .dark {
 	color: #ffffff;
-	background: var(--background-dark);
+	background-color: #000000;
 }
 
 a {

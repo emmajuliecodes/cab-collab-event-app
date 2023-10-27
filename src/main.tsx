@@ -13,7 +13,7 @@ import Login from "./views/Login.tsx";
 import EventsListView from "./views/EventsListView.tsx";
 import UserProfile from "./views/Profile.tsx";
 import WithNav from "./components/Layouts/WithNav.tsx";
-import WithBackgroundVideo from "./components/Layouts/WithBackgroundVideo.tsx";
+// import WithBackgroundVideo from "./components/Layouts/WithBackgroundVideo.tsx";
 import EventDetailView from "./views/EventDetailView.tsx";
 import Register from "./views/Register.tsx";
 import EventForm from "./components/EventForm.tsx";
