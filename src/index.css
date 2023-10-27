@@ -6,10 +6,10 @@
 	font-weight: 400;
 	text-align: center;
 
-	/* color-scheme: light dark; */
-	/* 
+	color-scheme: dark light;
+
 	--background-light: url("ink.mp4");
-	--background-dark: url("spacewave.mp4"); */
+	--background-dark: url("spacewave.mp4");
 
 	/* font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -20,12 +20,10 @@
 
 .light {
 	color: #000000;
-	background: var(--background-light);
 }
 
 .dark {
 	color: #ffffff;
-	background: var(--background-dark);
 }
 
 a {
@@ -73,22 +71,14 @@ button:hover {
 
 /* @media (prefers-color-scheme: dark) {
 	:root {
-		color: #213547;
-		background-color: #ffffff;
-	}
-	a:hover {
-		color: #747bff;
-	}
-	button {
-		background-color: #f9f9f9;
 	}
 } */
 
 .nav {
-	/* position: sticky; */
+	position: sticky;
 	z-index: 100;
-	transition: background-color 0.3s ease;
-	margin-top: 20px;
+
+	/* margin-top: 20px; */
 	height: 50px;
 	display: flex;
 	justify-content: center;

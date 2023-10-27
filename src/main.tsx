@@ -35,9 +35,11 @@ const router = createBrowserRouter([
 			{
 				element: (
 					<>
-						<WithNav>
-							<Outlet />
-						</WithNav>
+						<WithBackgroundVideo>
+							<WithNav>
+								<Outlet />
+							</WithNav>
+						</WithBackgroundVideo>
 					</>
 				),
 				children: [

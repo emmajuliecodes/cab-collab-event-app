@@ -10,26 +10,23 @@ type Props = {
 const WithBackgroundVideo = (props: Props) => {
 	const isLightMode = useContext(LightDarkModeContext);
 	return (
-		<>
-			<div className="BackgroundVideo">
-				<video
-					autoPlay
-					loop
-					muted
-					id="homevid   "
-					style={{
-						objectFit: "cover",
-						height: "100vh ",
-						width: "100vw",
-						zIndex: -1,
-					}}>
-					{/* <source src={spacewave} type="video/mp4" /> */}
-					<source src={isLightMode ? ink : spacewave} type="video/mp4" />
-				</video>
-			</div>
-
+		<div>
+			<video
+				autoPlay
+				loop
+				muted
+				id="homevid   "
+				style={{
+					objectFit: "cover",
+					height: "100vh ",
+					width: "100vw",
+					zIndex: -100,
+				}}>
+				{/* <source src={spacewave} type="video/mp4" /> */}
+				<source src={isLightMode ? ink : spacewave} type="video/mp4" />
+			</video>
 			{props.children}
-		</>
+		</div>
 	);
 };
 

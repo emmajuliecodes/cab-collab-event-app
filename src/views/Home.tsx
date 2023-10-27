@@ -1,16 +1,9 @@
 // import "../App.css";
 // import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import { LightDarkModeContext } from "../context/LightDarkModeContext";
-// import { BackgroundVideo } from "../context/LightDarkModeContext";
-
-// import ink from "../assets/videos/ink.mp4";
-
-// import homeStyling from "../cssmodules/homeStyling.module.css";
 
 function Home() {
 	const redirect = useNavigate();
-	// const isLightMode = useContext(LightDarkModeContext);
 
 	return (
 		<div>

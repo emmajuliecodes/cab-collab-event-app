@@ -26,9 +26,7 @@ export interface Event {
 	description: string;
 	eventName: string;
 	host: string | User;
-	// Location: is a type only used for window.location
-	// https://developer.mozilla.org/en-US/docs/Web/API/Location
-	// map_location: Location;
+
 	street_address: string;
 	image: string;
 	public: boolean;
