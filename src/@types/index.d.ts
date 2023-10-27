@@ -14,16 +14,17 @@ export interface UserProfileData {
 	uid: string;
 
 }
-
+// Event is also an exising Type that represents the trigger of an Event Handler Function
 export interface Event {
+  id: string;
   date: string;
   endTime: string;
   startTime: string;
   eventType: string;
-  attendees: Array[];
-  invitees: Array[];
-  declined: Array[];
-  pending: Array[];
+  attending: string[];
+  invitees: string[];
+  declined: string[];
+  pending: string[];
   city: string;
   description: string;
   eventName: string;

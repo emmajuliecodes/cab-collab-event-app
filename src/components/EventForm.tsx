@@ -99,8 +99,12 @@ const EventForm: React.FC = () => {
       const newEvent = {
         ...formData,
         invitees: selectedUsers, // Set the invitees field with the IDs
+        pending: selectedUsers,
+        attending: [], 
+        declined: [],
         image: imageUrl,
-        host: userData.name
+        host: userData.name,
+        creator_id: userData.uid
       };
       console.log("new Event", newEvent);
       const docRef = await addDoc(collection(db, "events"), newEvent);
@@ -140,11 +144,13 @@ const EventForm: React.FC = () => {
         eventName: "",
         eventType: "public",
       });
+      setSelectedUsers([]);
       const allCheckboxes:NodeListOf<HTMLInputElement> = document.querySelectorAll('input[type=checkbox]');
       allCheckboxes.forEach((cb) => cb.checked = false);
       setImageFile(null);
       setFormError("");
       toast.success("Success, you created an event!");
+      toast.success("Try creating another one!");
     } catch (error) {
       console.error("Error: ", error);
       setFormError("Error submitting form. Try again later.");
