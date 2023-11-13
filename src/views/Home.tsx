@@ -5,37 +5,23 @@ import spacewave from "../assets/videos/spacewave.mp4";
 // import ink from "../assets/videos/ink.mp4";
 
 // import homeStyling from "../cssmodules/homeStyling.module.css";
-
-function App() {
+function Home() {
 	const redirect = useNavigate();
+
 	return (
 		<div>
-			<video
-				autoPlay
-				loop
-				muted
-				id="homevideo"
-				style={{
-					objectFit: "cover",
-					height: "100vw ",
-					width: "100vh",
-					zIndex: "-100",
-				}}>
-				<source src={spacewave} type="video/mp4" />
-				{/* <source src={stars} type="video/mp4" /> */}
-				{/* <source src={ink} type="video/mp4" /> */}
-			</video>
 			<div
 				style={{
-					position: "absolute",
+					position: "fixed",
 					top: "7em",
-
+					zIndex: 0,
 					height: "100%",
 					width: "100vw ",
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
 					alignItems: "center",
+					objectFit: "cover",
 				}}>
 				<h1>EventSpace</h1>
 				<h3>Much better than Facebook events...</h3>
@@ -51,4 +37,4 @@ function App() {
 	);
 }
 
-export default App;
+export default Home;
