@@ -9,29 +9,55 @@ function Home() {
 	const redirect = useNavigate();
 
 	return (
-		<div>
+		<div
+			style={{
+				position: "absolute",
+				top: 0,
+				zIndex: -50,
+				height: "100vh",
+				width: "100vw ",
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: "center",
+				alignItems: "center",
+				backgroundColor: "transparent",
+			}}>
+			<br></br>
+			<h1>EventSpace</h1>
+			<h2>Much better than Facebook events...</h2>
+			<br></br>
+			<button onClick={() => redirect("/listevent")}>Create event</button>
+			<br></br>
+			<br></br>
+			<button onClick={() => redirect("/events")}>Browse events</button>
+			<br></br>
+			<br></br>
 			<div
 				style={{
-					position: "fixed",
-					top: "7em",
-					zIndex: 0,
-					height: "100%",
+					position: "absolute",
+					top: 0,
+					zIndex: -50,
+					height: "100vh",
 					width: "100vw ",
 					display: "flex",
-					flexDirection: "column",
 					justifyContent: "center",
 					alignItems: "center",
-					objectFit: "cover",
+					backgroundColor: "transparent",
 				}}>
-				<h1>EventSpace</h1>
-				<h3>Much better than Facebook events...</h3>
-				<br></br>
-				<button onClick={() => redirect("/listevent")}>Create event</button>
-				<br></br>
-				<br></br>
-				<button onClick={() => redirect("/events")}>Browse events</button>
-				<br></br>
-				<br></br>
+				<video
+					autoPlay
+					loop
+					muted
+					id="homevideo"
+					style={{
+						objectFit: "cover",
+						height: "100% ",
+						width: "100%",
+					}}>
+					<source src={spacewave} type="video/mp4" />
+					{/* <source src={stars} type="video/mp4" /> */}
+					{/* <source src={ink} type="video/mp4" /> */}
+				</video>
 			</div>
 		</div>
 	);

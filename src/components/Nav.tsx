@@ -9,23 +9,6 @@ function Nav() {
 	const redirect = useNavigate();
 	const { isLightMode, toggleMode } = useLightDarkMode();
 
-	// const navContainerStyles: React.CSSProperties = {
-	// 	height: "50px",
-	// 	// border: "solid 1px black",
-	// 	display: "flex",
-	// 	justifyContent: "center",
-	// 	alignItems: "center",
-	// 	padding: "0 1em",
-	// };
-
-	// const linksContainerStyles: React.CSSProperties = {
-	// 	justifyContent: "space-evenly",
-	// 	alignItems: "center",
-	// 	flexDirection: "row",
-	// 	display: "flex",
-	// 	gap: "2em",
-	// };
-
 	const activeLink: React.CSSProperties = {
 		color: "blueviolet",
 		fontWeight: "bolder",
