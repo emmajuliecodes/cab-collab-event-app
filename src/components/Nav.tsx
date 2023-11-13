@@ -90,10 +90,11 @@ function Nav() {
 				) : (
 					<button onClick={() => redirect("/register")}>Create event</button>
 				)}
+
+				<div className={isLightMode ? "light" : "dark"}>
+					<button onClick={toggleMode}>Toggle Mode</button>
+				</div>
 			</p>
-			<div className={isLightMode ? "light" : "dark"}>
-				<button onClick={toggleMode}>Toggle Mode</button>
-			</div>
 		</nav>
 	);
 }

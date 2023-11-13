@@ -12,15 +12,14 @@ function Home() {
 		<div
 			style={{
 				position: "absolute",
-				top: 0,
-				zIndex: -50,
+				top: "100px",
+				zIndex: 0,
 				height: "100vh",
 				width: "100vw ",
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "center",
 				alignItems: "center",
-				backgroundColor: "transparent",
 			}}>
 			<br></br>
 			<h1>EventSpace</h1>
@@ -36,13 +35,12 @@ function Home() {
 				style={{
 					position: "absolute",
 					top: 0,
-					zIndex: -50,
+					zIndex: -"100",
 					height: "100vh",
 					width: "100vw ",
 					display: "flex",
 					justifyContent: "center",
 					alignItems: "center",
-					backgroundColor: "transparent",
 				}}>
 				<video
 					autoPlay
@@ -53,10 +51,9 @@ function Home() {
 						objectFit: "cover",
 						height: "100% ",
 						width: "100%",
+						// zIndex: "-100",
 					}}>
 					<source src={spacewave} type="video/mp4" />
-					{/* <source src={stars} type="video/mp4" /> */}
-					{/* <source src={ink} type="video/mp4" /> */}
 				</video>
 			</div>
 		</div>

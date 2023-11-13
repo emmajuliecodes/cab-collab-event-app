@@ -39,8 +39,8 @@ body {
 	margin: 0;
 	/* display: flex;
 	place-items: bottom, top; */
-	min-width: 320px;
-	min-height: 100vh;
+	/* min-width: 320px;
+	min-height: 100vh; */
 }
 
 h1 {
@@ -103,12 +103,14 @@ button:hover {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 20em 1em;
+	padding: 1em;
+	z-index: 200;
 }
 
 .nav-link {
 	justify-content: space-evenly;
 	padding: 2em 1em;
+	z-index: 20;
 }
 
 .FormContainer {
