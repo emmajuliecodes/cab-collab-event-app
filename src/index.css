@@ -62,7 +62,7 @@ h2 {
 
 button {
 	border-radius: 1px;
-	border: 1px solid transparent;
+
 	padding: 0.4em 0.4em;
 	margin-right: 0.25em;
 	margin-left: 0.25em;
@@ -98,19 +98,19 @@ button:hover {
 } */
 
 .nav {
+	background: transparent;
 	margin-top: 20px;
 	height: 50px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 1em;
-	z-index: 200;
+	z-index: 0;
 }
 
 .nav-link {
 	justify-content: space-evenly;
 	padding: 2em 1em;
-	z-index: 20;
+	z-index: 0;
 }
 
 .FormContainer {

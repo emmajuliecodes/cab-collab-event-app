@@ -34,8 +34,7 @@ function Home() {
 			<div
 				style={{
 					position: "absolute",
-					top: 0,
-					zIndex: -"100",
+					zIndex: "-100",
 					height: "100vh",
 					width: "100vw ",
 					display: "flex",
@@ -49,9 +48,9 @@ function Home() {
 					id="homevideo"
 					style={{
 						objectFit: "cover",
-						height: "100% ",
-						width: "100%",
-						// zIndex: "-100",
+						height: "100vh",
+						width: "100vw",
+						zIndex: "-100",
 					}}>
 					<source src={spacewave} type="video/mp4" />
 				</video>
