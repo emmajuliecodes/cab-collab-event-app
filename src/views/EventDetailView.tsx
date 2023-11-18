@@ -1,52 +1,57 @@
-import {doc, getDoc} from 'firebase/firestore';
-import {db} from '../firebase/FirebaseConfig';
-import React, {useState, useEffect} from 'react';
-import {Event} from '../@types';
-import {useParams} from 'react-router-dom';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase/FirebaseConfig";
+import React, { useState, useEffect } from "react";
+import { Event } from "../@types";
+import { useParams } from "react-router-dom";
 
 function EventDetailView(): React.ReactElement | null {
-  const {id} = useParams();
-  const [eventData, setEventData] = useState<Event | null>(null);
-  const [error, setError] = useState('');
+	const { id } = useParams();
+	const [eventData, setEventData] = useState<Event | null>(null);
+	const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchEventById = async () => {
-      const stringid = id as string;
-      const docRef = doc(db, 'events', stringid);
+	useEffect(() => {
+		const fetchEventById = async () => {
+			const stringid = id as string;
+			const docRef = doc(db, "events", stringid);
 
-      const docSnap = await getDoc(docRef);
+			const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        console.log('doc data', docSnap.data());
-        const data = docSnap.data() as Event;
-        setEventData(data);
-      } else {
-        setError('Something went wrong :( ');
-        console.log('No document exists');
-      }
-    };
-    fetchEventById().catch((e) => console.log(e));
-  }, [id]);
-  console.log(id);
+			if (docSnap.exists()) {
+				console.log("doc data", docSnap.data());
+				const data = docSnap.data() as Event;
+				setEventData(data);
+			} else {
+				setError("Something went wrong :( ");
+				console.log("No document exists");
+			}
+		};
+		fetchEventById().catch((e) => console.log(e));
+	}, [id]);
+	console.log(id);
 
-  return (
-    <>
-      <h1>Event information</h1>
-      {eventData && (
-        <div className='event-detail'>
-          <p>{eventData.eventName}</p>
-          <img
-            src={eventData.image}
-            alt='Event image'
-            style={{height: '100px', width: '100px'}}></img>
-          <p>{eventData.date}</p>
-          <p>{eventData.city}</p>
-          <p>About this event: {eventData.description}</p>
-        </div>
-      )}
-      {error && <p>{error}</p>}
-    </>
-  );
+	return (
+		<>
+			<h1>Event information</h1>
+			{eventData && (
+				<div className="event-detail">
+					<p>{eventData.eventName}</p>
+					<img
+						src={eventData.image}
+						alt="Event image"
+						style={{ height: "100px", width: "100px" }}></img>
+					<p>{eventData.date}</p>
+					<p>{eventData.city}</p>
+					<p>Start:{eventData.startTime}</p>
+					<p>Get the fook out: {eventData.endTime}</p>
+					<p>About this event: {eventData.description}</p>
+					<p>Event type: {eventData.eventType}</p>
+					<p>Address:{eventData.street_address}</p>
+					{/* add invitees info */}
+				</div>
+			)}
+			{error && <p>{error}</p>}
+		</>
+	);
 }
 
 export default EventDetailView;
