@@ -45,7 +45,8 @@ function EventDetailView(): React.ReactElement | null {
 					<p>Get the fook out: {eventData.endTime}</p>
 					<p>About this event: {eventData.description}</p>
 					<p>Event type: {eventData.eventType}</p>
-					<p>Address:{eventData.street_address}</p>
+					<p>Street address:{eventData.street_address}</p>
+					{/* Add google map */}
 					{/* add invitees info */}
 				</div>
 			)}
