@@ -4,55 +4,64 @@ type Props = {
 	title: string;
 	handleSubmit: (
 		e: FormEvent<HTMLFormElement>,
+		name: string,
 		email: string,
-		password: string,
-		name: string
-
+		password: string
 	) => void;
 };
 
 const AuthRegisterForm = ({ title, handleSubmit }: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-
 	const [name, setName] = useState("");
 
 	return (
-		<div>
-			<h1>{title}</h1>
-			<form onSubmit={(e) => handleSubmit(e, email, password, name)}>
-				<label htmlFor="email">Email </label>
-
+		<div className="FormContainer">
+			<h2>{title}</h2>
+			<form onSubmit={(e) => handleSubmit(e, name, email, password)}>
+				<label htmlFor="name" className="label">
+					Name:
+				</label>
+				<br></br>
 				<input
-					placeholder="add your email"
+					placeholder="Add your name"
+					type="name"
+					id="name"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+					className="InputField"
+				/>
+				<br></br>
+
+				<label htmlFor="email" className="label">
+					Email:
+				</label>
+				<br></br>
+				<input
+					placeholder="Add your email"
 					id="email"
 					type="email"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
+					className="InputField"
 				/>
 				<br></br>
-
-				<label htmlFor="password">Password </label>
+				<label htmlFor="password" className="label">
+					Password:
+				</label>
+				<br></br>
 				<input
-					placeholder="add your password"
+					placeholder="Add your password"
 					id="password"
 					type="password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
-				/>			
-        <br></br>
-				<label htmlFor="name">Name</label>
-				<input
-					placeholder="add your n"
-					id="name"
-					type="name"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
+					className="InputField"
 				/>
 				<br></br>
-
-
-				<button type="submit">{title}</button>
+				<button type="submit" className="submitButton">
+					{title}
+				</button>
 			</form>
 		</div>
 	);

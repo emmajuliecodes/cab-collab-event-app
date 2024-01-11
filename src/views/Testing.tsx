@@ -1,14 +1,14 @@
 import { db } from "../firebase/FirebaseConfig";
 import {
-	DocumentData,
-	Query,
+	// DocumentData,
+	// Query,
 	collection,
 	addDoc,
-	getDocs,
-	getDoc,
-	doc,
-	query,
-	where,
+	// getDocs,
+	// getDoc,
+	// doc,
+	// query,
+	// where,
 } from "firebase/firestore";
 // import { Event, User } from "../@types";
 // import { Link } from "react-router-dom";
@@ -184,19 +184,21 @@ import {
 import React from "react";
 import { Event } from "../@types";
 
-export type TestingPageProps = {};
+export type TestingPageProps = unknown;
 
 function makeEvent(event: Partial<Event>): Event {
 	return {
+		id: "",
 		date: new Date().toString(),
-		time: `${Math.random() * 12 + 1}:${Math.random() * 60}`,
+		startTime: `${Math.random() * 12 + 1}:${Math.random() * 60}`,
+		endTime: "",
 		eventType: "public",
-		attendees: [],
+		attending: [],
 		invitees: [],
 		declined: [],
 		pending: [],
 		city: "Melbourne",
-		description: "Fully sick party mate",
+		description: "new party time",
 		eventName: "Party On",
 		host: "With the Most",
 		// map_location: Location,
@@ -210,7 +212,7 @@ function makeEvent(event: Partial<Event>): Event {
 
 const TestingPage: React.FC<TestingPageProps> = () => {
 	async function createEvents() {
-		const cities = ["Melbourne", "Mexico City", "Dublin", "Athens"];
+		const cities = ["Melbourne", "Mexico City", "Dublin", "Sarajevo"];
 		const publicEvents = cities.map(
 			(city, i): Event =>
 				makeEvent({

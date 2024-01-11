@@ -2,24 +2,28 @@ export interface NotOk {
 	error: string;
 }
 
-export interface User {
-	_id: string;
+export interface UserProfileData {
 	name: string;
+	phone: string;
 	email: string;
-	username: string;
-	createdAt: string;
-	events: Array[];
-	avatar: string;
+	city: string;
+	myEvents: string[];
+	attending: string[];
+	declined: string[];
+	invites: string[];
+	uid: string;
 }
-
+// Event is also an exising Type that represents the trigger of an Event Handler Function
 export interface Event {
+	// id: string;
 	date: string;
-	time: string;
+	endTime: string;
+	startTime: string;
 	eventType: string;
-	attendees: Array[];
-	invitees: Array[];
-	declined: Array[];
-	pending: Array[];
+	attending: string[];
+	invitees: string[];
+	declined: string[];
+	pending: string[];
 	city: string;
 	description: string;
 	eventName: string;
@@ -33,6 +37,9 @@ export interface Event {
 	creator_id: string;
 }
 
-// public or private - true fales - use for My Events
+export interface LightDarkModeContextType {
+	isLightMode: boolean;
+	toggleMode: () => void;
+}
 
 export type Users = User[];
