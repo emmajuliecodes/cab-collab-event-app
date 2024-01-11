@@ -17,7 +17,7 @@ import WithNav from "./components/Layouts/WithNav.tsx";
 import EventDetailView from "./views/EventDetailView.tsx";
 import WithFooter from "./components/Layouts/Footer/WithFooter.tsx";
 import Register from "./views/Register.tsx";
-import EventModal from "./components/EventModal.tsx";
+import EventCreateForm from "./components/EventCreateForm.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "/listevent",
-						element: <EventModal />,
+						element: <EventCreateForm />,
 					},
 				],
 			},
