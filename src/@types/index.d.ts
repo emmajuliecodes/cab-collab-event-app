@@ -15,7 +15,7 @@ export interface UserProfileData {
 }
 // Event is also an exising Type that represents the trigger of an Event Handler Function
 export interface Event {
-	// id: string;
+	id: string;
 	date: string;
 	endTime: string;
 	startTime: string;
@@ -42,4 +42,4 @@ export interface LightDarkModeContextType {
 	toggleMode: () => void;
 }
 
-export type Users = User[];
+export type Users = User[""];

@@ -1,6 +1,6 @@
 import { db } from "../firebase/FirebaseConfig";
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
-import { Event, User } from "../@types";
+import { Event, Users } from "../@types";
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -49,7 +49,7 @@ function EventsListView() {
 type EventListItemProps = { event: Event & { id: string } };
 
 const EventListItem: React.FC<EventListItemProps> = ({ event }) => {
-	const [userData, setUserData] = useState<User | null>(null);
+	const [userData, setUserData] = useState<Users | null>(null);
 	useEffect(() => {
 		const fetchUserById = async () => {
 			const creatorUserId = event.creator_id as string;
@@ -59,7 +59,7 @@ const EventListItem: React.FC<EventListItemProps> = ({ event }) => {
 
 			if (docSnap.exists()) {
 				console.log("doc data", docSnap.data());
-				const data = docSnap.data() as User;
+				const data = docSnap.data() as Users;
 				setUserData(data);
 			} else {
 				// setError("Something went wrong :( ");
@@ -74,7 +74,7 @@ const EventListItem: React.FC<EventListItemProps> = ({ event }) => {
 			<p>Name: {event.eventName}</p>
 			<p>Date: {event.date}</p>
 			<p>City: {event.city}</p>
-			<p>Creator: {userData?.name}</p>
+			<p>Creator: {userData?.name as string}</p>
 			<Link to={`/eventById/${event.id}`}>View event</Link>
 			<br></br>
 			<br></br>
