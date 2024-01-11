@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 
 type Props = {
 	title: string;
+
 	handleSubmit: (
 		e: FormEvent<HTMLFormElement>,
 		email: string,
@@ -9,33 +10,47 @@ type Props = {
 	) => void;
 };
 
-const AuthForm = ({ title, handleSubmit }: Props) => {
+const AuthLoginForm = ({ title, handleSubmit }: Props) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
 	// const changeHandler = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
 	return (
-		<div>
-			<h1>{title}</h1>
+		<div className="FormContainer">
+			<h2>{title}</h2>
 			<form onSubmit={(e) => handleSubmit(e, email, password)}>
-				<label htmlFor="email">Email</label>
+				<label htmlFor="email" className="label">
+					Email
+				</label>
+				<br></br>
 				<input
+					placeholder="add your email"
 					id="email"
 					type="email"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
+					className="InputField"
 				/>
-				<label htmlFor="password">Password</label>
+				<br></br>
+				<label htmlFor="password" className="label">
+					Password
+				</label>
+				<br></br>
 				<input
+					placeholder="add your password"
 					id="password"
 					type="password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
+					className="InputField"
 				/>
-				<button type="submit">{title}</button>
+				<br></br>
+				<button type="submit" className="submitButton">
+					{title}
+				</button>
 			</form>
 		</div>
 	);
 };
 
-export default AuthForm;
+export default AuthLoginForm;

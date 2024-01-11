@@ -41,7 +41,13 @@ function EventDetailView(): React.ReactElement | null {
 						style={{ height: "100px", width: "100px" }}></img>
 					<p>{eventData.date}</p>
 					<p>{eventData.city}</p>
+					<p>Start:{eventData.startTime}</p>
+					<p>Get the fook out: {eventData.endTime}</p>
 					<p>About this event: {eventData.description}</p>
+					<p>Event type: {eventData.eventType}</p>
+					<p>Street address:{eventData.street_address}</p>
+					{/* Add google map */}
+					{/* add invitees info */}
 				</div>
 			)}
 			{error && <p>{error}</p>}

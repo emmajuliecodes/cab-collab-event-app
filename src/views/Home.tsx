@@ -1,21 +1,62 @@
-import "../App.css";
+// import "../App.css";
+import { useNavigate } from "react-router-dom";
+import spacewave from "../assets/videos/spacewave.mp4";
+// import stars from "../assets/videos/stars.mp4";
+// import ink from "../assets/videos/ink.mp4";
 
-function App() {
+// import homeStyling from "../cssmodules/homeStyling.module.css";
+function Home() {
+	const redirect = useNavigate();
+
 	return (
-		<>
-			<h1>It's the Final Project!</h1>
-			{/* <div className="card">
-				<iframe
-					width="560"
-					height="315"
-					src="https://www.youtube.com/embed/9jK-NcRmVcw?si=MEG_OYkRY6G_7UUh?allow='autoplay'"
-					title="YouTube video player"
-					frameBorder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-					allowFullScreen></iframe>
-			</div> */}
-		</>
+		<div
+			style={{
+				position: "absolute",
+				top: "100px",
+				zIndex: 0,
+				height: "100vh",
+				width: "100vw ",
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: "center",
+				alignItems: "center",
+			}}>
+			<br></br>
+			<h1>EventSpace</h1>
+			<h2>Much better than Facebook events...</h2>
+			<br></br>
+			<button onClick={() => redirect("/listevent")}>Create event</button>
+			<br></br>
+			<br></br>
+			<button onClick={() => redirect("/events")}>Browse events</button>
+			<br></br>
+			<br></br>
+			<div
+				style={{
+					position: "absolute",
+					zIndex: "-100",
+					height: "100vh",
+					width: "100vw ",
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+				}}>
+				<video
+					autoPlay
+					loop
+					muted
+					id="homevideo"
+					style={{
+						objectFit: "cover",
+						height: "100vh",
+						width: "100vw",
+						zIndex: "-100",
+					}}>
+					<source src={spacewave} type="video/mp4" />
+				</video>
+			</div>
+		</div>
 	);
 }
 
-export default App;
+export default Home;
